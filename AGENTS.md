@@ -127,7 +127,8 @@ Sempre que executar uma tarefa:
 4. teste quando possível;
 5. liste arquivos criados/alterados;
 6. explique como testar;
-7. informe limitações e próximos passos.
+7. informe limitações e próximos passos;
+8. ao finalizar uma mudança real, faça commit no Git e atualize o repositório remoto.
 
 ## Critério de qualidade
 
