@@ -6,8 +6,9 @@ extends CharacterBody3D
 @export var mouse_sensitivity := 0.0025
 @export var camera_distance := 7.8
 @export var camera_pitch_degrees := 45.0
-@export var min_camera_pitch_degrees := 30.0
-@export var max_camera_pitch_degrees := 62.0
+@export var min_camera_pitch_degrees := 8.0
+@export var max_camera_pitch_degrees := 82.0
+@export var camera_pitch_sensitivity := 180.0
 
 @onready var camera_pivot: Node3D = $CameraPivot
 @onready var camera: Camera3D = $CameraPivot/Camera3D
@@ -156,7 +157,7 @@ func _get_camera_relative_direction(input_vector: Vector2) -> Vector3:
 func _update_camera_rotation(mouse_delta: Vector2) -> void:
 	rotate_y(-mouse_delta.x * mouse_sensitivity)
 	camera_pitch = clamp(
-		camera_pitch + mouse_delta.y * mouse_sensitivity * 120.0,
+		camera_pitch + mouse_delta.y * mouse_sensitivity * camera_pitch_sensitivity,
 		min_camera_pitch_degrees,
 		max_camera_pitch_degrees
 	)
