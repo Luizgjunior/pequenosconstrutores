@@ -4,6 +4,10 @@ extends CharacterBody3D
 @export var move_speed := 5.0
 @export var jump_velocity := 5.0
 @export var mouse_sensitivity := 0.0025
+@export var camera_distance := 7.8
+@export var camera_pitch_degrees := 45.0
+@export var min_camera_pitch_degrees := 30.0
+@export var max_camera_pitch_degrees := 62.0
 
 @onready var camera_pivot: Node3D = $CameraPivot
 @onready var camera: Camera3D = $CameraPivot/Camera3D
@@ -24,6 +28,7 @@ var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 var mouse_is_captured := true
 var raw_movement_input := Vector2.ZERO
 var walk_time := 0.0
+var camera_pitch := 45.0
 var default_left_arm_rotation := Vector3.ZERO
 var default_right_arm_rotation := Vector3.ZERO
 var default_left_leg_rotation := Vector3.ZERO
@@ -34,6 +39,7 @@ func _ready() -> void:
 	_ensure_default_input_actions()
 	_store_default_limb_pose()
 	_apply_selected_character()
+	camera_pitch = camera_pitch_degrees
 	_frame_camera_on_player()
 	_capture_mouse()
 	print("Player carregado: WASD move, Espaço pula, ESC alterna o mouse.")
@@ -51,7 +57,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 
 	if mouse_is_captured and event is InputEventMouseMotion:
-		_update_horizontal_rotation(event.relative)
+		_update_camera_rotation(event.relative)
 
 
 func _physics_process(delta: float) -> void:
@@ -147,13 +153,25 @@ func _get_camera_relative_direction(input_vector: Vector2) -> Vector3:
 	return ((right * input_vector.x) + (forward * -input_vector.y)).normalized()
 
 
-func _update_horizontal_rotation(mouse_delta: Vector2) -> void:
+func _update_camera_rotation(mouse_delta: Vector2) -> void:
 	rotate_y(-mouse_delta.x * mouse_sensitivity)
+	camera_pitch = clamp(
+		camera_pitch + mouse_delta.y * mouse_sensitivity * 120.0,
+		min_camera_pitch_degrees,
+		max_camera_pitch_degrees
+	)
+	_frame_camera_on_player()
 
 
 func _frame_camera_on_player() -> void:
+	camera_pitch = clamp(camera_pitch, min_camera_pitch_degrees, max_camera_pitch_degrees)
 	camera_pivot.position = Vector3(0.0, 1.8, 0.0)
-	camera.position = Vector3(0.0, 5.0, 6.0)
+	var pitch_radians := deg_to_rad(camera_pitch)
+	camera.position = Vector3(
+		0.0,
+		sin(pitch_radians) * camera_distance,
+		cos(pitch_radians) * camera_distance
+	)
 	camera.look_at(global_position + Vector3(0.0, 1.0, 0.0), Vector3.UP)
 
 
