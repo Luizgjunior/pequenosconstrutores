@@ -4,9 +4,9 @@ extends CharacterBody3D
 @export var move_speed := 5.0
 @export var jump_velocity := 5.0
 @export var mouse_sensitivity := 0.0025
-@export var fixed_camera_pitch_degrees := -45.0
 
 @onready var camera_pivot: Node3D = $CameraPivot
+@onready var camera: Camera3D = $CameraPivot/Camera3D
 @onready var body_mesh: MeshInstance3D = $VisualRoot/Body
 @onready var head_mesh: MeshInstance3D = $VisualRoot/Head
 @onready var hair_mesh: MeshInstance3D = $VisualRoot/Hair
@@ -34,7 +34,7 @@ func _ready() -> void:
 	_ensure_default_input_actions()
 	_store_default_limb_pose()
 	_apply_selected_character()
-	_apply_camera_pitch()
+	_frame_camera_on_player()
 	_capture_mouse()
 	print("Player carregado: WASD move, Espaço pula, ESC alterna o mouse.")
 
@@ -151,8 +151,10 @@ func _update_horizontal_rotation(mouse_delta: Vector2) -> void:
 	rotate_y(-mouse_delta.x * mouse_sensitivity)
 
 
-func _apply_camera_pitch() -> void:
-	camera_pivot.rotation.x = deg_to_rad(fixed_camera_pitch_degrees)
+func _frame_camera_on_player() -> void:
+	camera_pivot.position = Vector3(0.0, 1.8, 0.0)
+	camera.position = Vector3(0.0, 5.0, 6.0)
+	camera.look_at(global_position + Vector3(0.0, 1.0, 0.0), Vector3.UP)
 
 
 func _toggle_mouse_capture() -> void:
