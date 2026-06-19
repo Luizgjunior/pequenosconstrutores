@@ -19,6 +19,7 @@ extends CharacterBody3D
 
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 var mouse_captured := true
+var camera_control_enabled := false
 var walk_time := 0.0
 var current_camera_pitch := 45.0
 
@@ -36,7 +37,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		return
 
-	if mouse_captured and event is InputEventMouseMotion:
+	if mouse_captured and camera_control_enabled and event is InputEventMouseMotion:
 		rotate_y(-event.relative.x * mouse_sensitivity)
 		current_camera_pitch = clamp(
 			current_camera_pitch + event.relative.y * mouse_sensitivity * camera_pitch_sensitivity,
@@ -44,6 +45,10 @@ func _unhandled_input(event: InputEvent) -> void:
 			max_camera_pitch_degrees
 		)
 		_update_camera_position()
+
+
+func set_camera_control_enabled(is_enabled: bool) -> void:
+	camera_control_enabled = is_enabled
 
 
 func _physics_process(delta: float) -> void:

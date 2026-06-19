@@ -7,13 +7,18 @@ const MAX_BUILD_DISTANCE := 18.0
 const BUILD_LIMIT := 16.0
 const AIM_SPEED := 1.0
 const AIM_MARGIN := 18.0
+const SAVE_PATH := "user://placed_blocks.json"
+const MISSION_WOOD_TARGET := 6
+const MISSION_AREA_LIMIT := 6.0
 
 @onready var placed_blocks_root: Node3D = $PlacedBlocks
 @onready var crosshair: Control = get_node_or_null("../AimLayer/Crosshair") as Control
+@onready var selected_block_label: Label = get_node_or_null("../HudLayer/Panel/VBox/SelectedBlockLabel") as Label
+@onready var mode_label: Label = get_node_or_null("../HudLayer/Panel/VBox/ModeLabel") as Label
+@onready var mission_label: Label = get_node_or_null("../HudLayer/Panel/VBox/MissionLabel") as Label
 
 var block_mesh := BoxMesh.new()
 var block_shape := BoxShape3D.new()
-var block_material := StandardMaterial3D.new()
 var preview_material := StandardMaterial3D.new()
 var blocked_preview_material := StandardMaterial3D.new()
 var arrow_material := StandardMaterial3D.new()
@@ -22,20 +27,26 @@ var preview_arrow: MeshInstance3D
 var player: CharacterBody3D
 var camera: Camera3D
 var aim_screen_position := Vector2.ZERO
+var selected_block_type := "wood"
+var build_mode_enabled := true
+var block_materials := {}
 
 
 func _ready() -> void:
 	player = get_node_or_null("../Player") as CharacterBody3D
 	if player != null:
 		camera = player.get_node_or_null("CameraPivot/Camera3D") as Camera3D
+		if player.has_method("set_camera_control_enabled"):
+			player.set_camera_control_enabled(false)
 
 	aim_screen_position = get_viewport().get_visible_rect().size * 0.5
 	block_mesh.size = Vector3.ONE * BLOCK_SIZE
 	block_shape.size = Vector3.ONE * BLOCK_SIZE
-	block_material.albedo_color = Color(0.45, 0.27, 0.12, 1)
-	block_material.roughness = 0.9
+	_setup_block_materials()
 	_setup_preview()
 	_update_crosshair_position()
+	_load_blocks()
+	_update_hud()
 
 
 func _process(_delta: float) -> void:
@@ -44,11 +55,16 @@ func _process(_delta: float) -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if event is InputEventMouseMotion:
+	if event is InputEventKey and event.pressed and not event.echo:
+		_handle_key_input(event)
+	elif build_mode_enabled and event is InputEventMouseMotion:
 		_move_aim(event.relative * AIM_SPEED)
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if not build_mode_enabled:
+		return
+
 	if event.is_action_pressed("place_block"):
 		place_block_from_camera()
 		get_viewport().set_input_as_handled()
@@ -66,21 +82,9 @@ func place_block_from_camera() -> void:
 	if not _can_place_at(block_position):
 		return
 
-	var block := StaticBody3D.new()
-	block.name = "WoodBlock"
-	block.position = block_position
-	block.add_to_group("placed_blocks")
-
-	var collision := CollisionShape3D.new()
-	collision.shape = block_shape
-	block.add_child(collision)
-
-	var mesh_instance := MeshInstance3D.new()
-	mesh_instance.mesh = block_mesh
-	mesh_instance.material_override = block_material
-	block.add_child(mesh_instance)
-
-	placed_blocks_root.add_child(block)
+	_create_block(block_position, selected_block_type)
+	_save_blocks()
+	_update_hud()
 
 
 func remove_block_from_camera() -> void:
@@ -91,10 +95,81 @@ func remove_block_from_camera() -> void:
 	var collider := hit.get("collider") as Node
 	if collider != null and collider.is_in_group("placed_blocks"):
 		collider.queue_free()
+		await get_tree().process_frame
+		_save_blocks()
+		_update_hud()
+
+
+func _handle_key_input(event: InputEventKey) -> void:
+	var key := event.physical_keycode
+	if key == KEY_NONE:
+		key = event.keycode
+
+	match key:
+		KEY_1:
+			_select_block("wood")
+		KEY_2:
+			_select_block("stone")
+		KEY_3:
+			_select_block("sand")
+		KEY_TAB:
+			_toggle_build_mode()
+
+
+func _select_block(block_type: String) -> void:
+	if not block_materials.has(block_type):
+		return
+
+	selected_block_type = block_type
+	_update_hud()
+
+
+func _toggle_build_mode() -> void:
+	build_mode_enabled = not build_mode_enabled
+	if player != null and player.has_method("set_camera_control_enabled"):
+		player.set_camera_control_enabled(not build_mode_enabled)
+	if crosshair != null:
+		crosshair.visible = build_mode_enabled
+	_update_hud()
+
+
+func _setup_block_materials() -> void:
+	block_materials = {
+		"wood": _create_material(Color(0.45, 0.27, 0.12, 1)),
+		"stone": _create_material(Color(0.42, 0.40, 0.36, 1)),
+		"sand": _create_material(Color(0.76, 0.62, 0.39, 1)),
+	}
+
+
+func _create_material(color: Color) -> StandardMaterial3D:
+	var material := StandardMaterial3D.new()
+	material.albedo_color = color
+	material.roughness = 0.9
+	return material
+
+
+func _create_block(block_position: Vector3, block_type: String) -> StaticBody3D:
+	var block := StaticBody3D.new()
+	block.name = "%sBlock" % block_type.capitalize()
+	block.position = block_position
+	block.set_meta("block_type", block_type)
+	block.add_to_group("placed_blocks")
+
+	var collision := CollisionShape3D.new()
+	collision.shape = block_shape
+	block.add_child(collision)
+
+	var mesh_instance := MeshInstance3D.new()
+	mesh_instance.mesh = block_mesh
+	mesh_instance.material_override = block_materials.get(block_type, block_materials.wood)
+	block.add_child(mesh_instance)
+
+	placed_blocks_root.add_child(block)
+	return block
 
 
 func _setup_preview() -> void:
-	preview_material.albedo_color = Color(0.9, 0.72, 0.35, 0.42)
+	preview_material.albedo_color = Color(0.25, 0.9, 0.38, 0.42)
 	preview_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	preview_material.roughness = 0.8
 
@@ -127,6 +202,11 @@ func _setup_preview() -> void:
 
 func _update_preview() -> void:
 	if preview_block == null or preview_arrow == null:
+		return
+
+	if not build_mode_enabled:
+		preview_block.visible = false
+		preview_arrow.visible = false
 		return
 
 	var hit := _raycast_from_camera()
@@ -173,6 +253,43 @@ func _update_crosshair_position() -> void:
 	crosshair.global_position = aim_screen_position - crosshair.size * 0.5
 
 
+func _update_hud() -> void:
+	if selected_block_label != null:
+		selected_block_label.text = "Bloco: %s  (1 Madeira, 2 Pedra, 3 Areia)" % _get_block_display_name(selected_block_type)
+	if mode_label != null:
+		mode_label.text = "Modo: %s  (Tab alterna)" % ("Construcao" if build_mode_enabled else "Camera")
+	if mission_label != null:
+		var wood_count := _count_mission_wood_blocks()
+		if wood_count >= MISSION_WOOD_TARGET:
+			mission_label.text = "Missao: base da arca iniciada! Muito bem."
+		else:
+			mission_label.text = "Missao: coloque %d/%d blocos de madeira na area central" % [wood_count, MISSION_WOOD_TARGET]
+
+
+func _get_block_display_name(block_type: String) -> String:
+	match block_type:
+		"wood":
+			return "Madeira"
+		"stone":
+			return "Pedra"
+		"sand":
+			return "Areia"
+		_:
+			return block_type
+
+
+func _count_mission_wood_blocks() -> int:
+	var total := 0
+	for block in placed_blocks_root.get_children():
+		if not block is Node3D:
+			continue
+		if block.get_meta("block_type", "") != "wood":
+			continue
+		if abs(block.position.x) <= MISSION_AREA_LIMIT and abs(block.position.z) <= MISSION_AREA_LIMIT:
+			total += 1
+	return total
+
+
 func _get_place_position(hit: Dictionary) -> Vector3:
 	var hit_position := hit["position"] as Vector3
 	var hit_normal := hit["normal"] as Vector3
@@ -210,3 +327,44 @@ func _can_place_at(block_position: Vector3) -> bool:
 			return false
 
 	return true
+
+
+func _save_blocks() -> void:
+	var blocks := []
+	for block in placed_blocks_root.get_children():
+		if not block is Node3D:
+			continue
+		blocks.append({
+			"type": block.get_meta("block_type", "wood"),
+			"position": [block.position.x, block.position.y, block.position.z],
+		})
+
+	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
+	if file == null:
+		return
+
+	file.store_string(JSON.stringify(blocks))
+
+
+func _load_blocks() -> void:
+	if not FileAccess.file_exists(SAVE_PATH):
+		return
+
+	var file := FileAccess.open(SAVE_PATH, FileAccess.READ)
+	if file == null:
+		return
+
+	var parsed = JSON.parse_string(file.get_as_text())
+	if not parsed is Array:
+		return
+
+	for block_data in parsed:
+		if not block_data is Dictionary:
+			continue
+		var position_data: Array = block_data.get("position", [])
+		if position_data.size() != 3:
+			continue
+		var block_position := Vector3(position_data[0], position_data[1], position_data[2])
+		var block_type: String = block_data.get("type", "wood")
+		if block_materials.has(block_type):
+			_create_block(block_position, block_type)

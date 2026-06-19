@@ -67,6 +67,28 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.24, 0)
 material_override = SubResource("Material_dry_grass")
 mesh = SubResource("BoxMesh_build_area")
 
+[node name="BuildMarkers" type="Node3D" parent="Terrain"]
+
+[node name="MarkerPostNorthWest" type="MeshInstance3D" parent="Terrain/BuildMarkers"]
+transform = Transform3D(0.55, 0, 0, 0, 0.8, 0, 0, 0, 0.55, -6, 0.75, -6)
+material_override = SubResource("Material_wood")
+mesh = SubResource("CylinderMesh_trunk")
+
+[node name="MarkerPostNorthEast" type="MeshInstance3D" parent="Terrain/BuildMarkers"]
+transform = Transform3D(0.55, 0, 0, 0, 0.8, 0, 0, 0, 0.55, 6, 0.75, -6)
+material_override = SubResource("Material_wood")
+mesh = SubResource("CylinderMesh_trunk")
+
+[node name="MarkerPostSouthWest" type="MeshInstance3D" parent="Terrain/BuildMarkers"]
+transform = Transform3D(0.55, 0, 0, 0, 0.8, 0, 0, 0, 0.55, -6, 0.75, 6)
+material_override = SubResource("Material_wood")
+mesh = SubResource("CylinderMesh_trunk")
+
+[node name="MarkerPostSouthEast" type="MeshInstance3D" parent="Terrain/BuildMarkers"]
+transform = Transform3D(0.55, 0, 0, 0, 0.8, 0, 0, 0, 0.55, 6, 0.75, 6)
+material_override = SubResource("Material_wood")
+mesh = SubResource("CylinderMesh_trunk")
+
 [node name="BlockSamples" type="Node3D" parent="."]
 
 [node name="StoneBlock" type="MeshInstance3D" parent="BlockSamples"]
@@ -80,6 +102,36 @@ material_override = SubResource("Material_wood")
 mesh = SubResource("BoxMesh_block")
 
 [node name="Decorations" type="Node3D" parent="."]
+
+[node name="Rocks" type="Node3D" parent="Decorations"]
+
+[node name="RockNorth" type="MeshInstance3D" parent="Decorations/Rocks"]
+transform = Transform3D(1.8, 0, 0, 0, 0.55, 0, 0, 0, 1.2, 0, 0.48, -14)
+material_override = SubResource("Material_stone")
+mesh = SubResource("BoxMesh_block")
+
+[node name="RockEast" type="MeshInstance3D" parent="Decorations/Rocks"]
+transform = Transform3D(1.2, 0, 0, 0, 0.65, 0, 0, 0, 1.6, 14, 0.52, 2)
+material_override = SubResource("Material_stone")
+mesh = SubResource("BoxMesh_block")
+
+[node name="RockSouth" type="MeshInstance3D" parent="Decorations/Rocks"]
+transform = Transform3D(1.4, 0, 0, 0, 0.5, 0, 0, 0, 1, -3, 0.45, 14)
+material_override = SubResource("Material_stone")
+mesh = SubResource("BoxMesh_block")
+
+[node name="WoodPile" type="Node3D" parent="Decorations"]
+transform = Transform3D(0.965926, 0, -0.258819, 0, 1, 0, 0.258819, 0, 0.965926, 7, 0.4, 4)
+
+[node name="Log1" type="MeshInstance3D" parent="Decorations/WoodPile"]
+transform = Transform3D(0.35, 0, 0, 0, 0.35, 0, 0, 0, 1.8, 0, 0, 0)
+material_override = SubResource("Material_wood")
+mesh = SubResource("CylinderMesh_trunk")
+
+[node name="Log2" type="MeshInstance3D" parent="Decorations/WoodPile"]
+transform = Transform3D(0.35, 0, 0, 0, 0.35, 0, 0, 0, 1.8, 0.45, 0.12, 0.15)
+material_override = SubResource("Material_wood")
+mesh = SubResource("CylinderMesh_trunk")
 
 [node name="Tree1" type="Node3D" parent="Decorations"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.2, -7)

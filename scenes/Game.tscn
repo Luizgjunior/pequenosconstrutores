@@ -28,3 +28,26 @@ theme_override_font_sizes/font_size = 28
 text = "+"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="HudLayer" type="CanvasLayer" parent="."]
+
+[node name="Panel" type="PanelContainer" parent="HudLayer"]
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 430.0
+offset_bottom = 116.0
+
+[node name="VBox" type="VBoxContainer" parent="HudLayer/Panel"]
+layout_mode = 2
+
+[node name="SelectedBlockLabel" type="Label" parent="HudLayer/Panel/VBox"]
+layout_mode = 2
+text = "Bloco: Madeira"
+
+[node name="ModeLabel" type="Label" parent="HudLayer/Panel/VBox"]
+layout_mode = 2
+text = "Modo: Construcao"
+
+[node name="MissionLabel" type="Label" parent="HudLayer/Panel/VBox"]
+layout_mode = 2
+text = "Missao: coloque 0/6 blocos de madeira na area central"
