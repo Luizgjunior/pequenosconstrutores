@@ -4,8 +4,7 @@ extends CharacterBody3D
 @export var move_speed := 5.0
 @export var jump_velocity := 5.0
 @export var mouse_sensitivity := 0.0025
-@export var min_camera_pitch := -55.0
-@export var max_camera_pitch := 35.0
+@export var fixed_camera_pitch_degrees := -45.0
 
 @onready var camera_pivot: Node3D = $CameraPivot
 @onready var body_mesh: MeshInstance3D = $VisualRoot/Body
@@ -22,7 +21,6 @@ extends CharacterBody3D
 @onready var accessory_root: Node3D = $VisualRoot/Accessories
 
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
-var camera_pitch := 0.0
 var mouse_is_captured := true
 var raw_movement_input := Vector2.ZERO
 var walk_time := 0.0
@@ -36,6 +34,7 @@ func _ready() -> void:
 	_ensure_default_input_actions()
 	_store_default_limb_pose()
 	_apply_selected_character()
+	_apply_camera_pitch()
 	_capture_mouse()
 	print("Player carregado: WASD move, Espaço pula, ESC alterna o mouse.")
 
@@ -52,7 +51,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 
 	if mouse_is_captured and event is InputEventMouseMotion:
-		_update_camera_rotation(event.relative)
+		_update_horizontal_rotation(event.relative)
 
 
 func _physics_process(delta: float) -> void:
@@ -148,14 +147,12 @@ func _get_camera_relative_direction(input_vector: Vector2) -> Vector3:
 	return ((right * input_vector.x) + (forward * -input_vector.y)).normalized()
 
 
-func _update_camera_rotation(mouse_delta: Vector2) -> void:
+func _update_horizontal_rotation(mouse_delta: Vector2) -> void:
 	rotate_y(-mouse_delta.x * mouse_sensitivity)
-	camera_pitch = clamp(
-		camera_pitch - mouse_delta.y * mouse_sensitivity,
-		deg_to_rad(min_camera_pitch),
-		deg_to_rad(max_camera_pitch)
-	)
-	camera_pivot.rotation.x = camera_pitch
+
+
+func _apply_camera_pitch() -> void:
+	camera_pivot.rotation.x = deg_to_rad(fixed_camera_pitch_degrees)
 
 
 func _toggle_mouse_capture() -> void:
