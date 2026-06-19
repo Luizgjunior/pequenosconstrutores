@@ -1,6 +1,12 @@
 extends CharacterBody3D
 
 
+const CHARACTER_MODEL_PATHS := {
+	"boy_builder": "res://assets/models/characters/boy_builder.glb",
+	"girl_builder": "res://assets/models/characters/girl_builder.glb",
+}
+const TARGET_MODEL_HEIGHT := 1.7
+
 @export var move_speed := 5.0
 @export var jump_velocity := 5.0
 @export var mouse_sensitivity := 0.0025
@@ -10,40 +16,25 @@ extends CharacterBody3D
 @export var max_camera_pitch_degrees := 82.0
 @export var camera_pitch_sensitivity := 180.0
 
+@onready var model_root: Node3D = $VisualRoot/ModelRoot
+@onready var fallback_visual: Node3D = $VisualRoot/ModelRoot/FallbackVisual
 @onready var camera_pivot: Node3D = $CameraPivot
 @onready var camera: Camera3D = $CameraPivot/Camera3D
-@onready var body_mesh: MeshInstance3D = $VisualRoot/Body
-@onready var head_mesh: MeshInstance3D = $VisualRoot/Head
-@onready var hair_mesh: MeshInstance3D = $VisualRoot/Hair
-@onready var left_arm_pivot: Node3D = $VisualRoot/LeftArmPivot
-@onready var right_arm_pivot: Node3D = $VisualRoot/RightArmPivot
-@onready var left_leg_pivot: Node3D = $VisualRoot/LeftLegPivot
-@onready var right_leg_pivot: Node3D = $VisualRoot/RightLegPivot
-@onready var left_arm_mesh: MeshInstance3D = $VisualRoot/LeftArmPivot/LeftArm
-@onready var right_arm_mesh: MeshInstance3D = $VisualRoot/RightArmPivot/RightArm
-@onready var left_leg_mesh: MeshInstance3D = $VisualRoot/LeftLegPivot/LeftLeg
-@onready var right_leg_mesh: MeshInstance3D = $VisualRoot/RightLegPivot/RightLeg
-@onready var accessory_root: Node3D = $VisualRoot/Accessories
 
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 var mouse_is_captured := true
 var raw_movement_input := Vector2.ZERO
-var walk_time := 0.0
 var camera_pitch := 45.0
-var default_left_arm_rotation := Vector3.ZERO
-var default_right_arm_rotation := Vector3.ZERO
-var default_left_leg_rotation := Vector3.ZERO
-var default_right_leg_rotation := Vector3.ZERO
+var loaded_character_model: Node3D
 
 
 func _ready() -> void:
 	_ensure_default_input_actions()
-	_store_default_limb_pose()
-	_apply_selected_character()
+	load_character_model(_get_selected_character_id())
 	camera_pitch = camera_pitch_degrees
 	_frame_camera_on_player()
 	_capture_mouse()
-	print("Player carregado: WASD move, Espaço pula, ESC alterna o mouse.")
+	print("Player carregado: WASD move, Espaco pula, ESC alterna o mouse.")
 
 
 func _input(event: InputEvent) -> void:
@@ -66,7 +57,141 @@ func _physics_process(delta: float) -> void:
 	_apply_jump()
 	_apply_movement()
 	move_and_slide()
-	_animate_walk(delta)
+
+
+func load_character_model(character_id: String) -> void:
+	_clear_loaded_character_model()
+
+	var current_model_root := _get_model_root()
+	var current_fallback_visual := _get_fallback_visual()
+	if current_model_root == null or current_fallback_visual == null:
+		push_warning("Player sem ModelRoot ou FallbackVisual. Visual do personagem nao foi carregado.")
+		return
+
+	var normalized_id := character_id if CHARACTER_MODEL_PATHS.has(character_id) else "boy_builder"
+	var model_path: String = CHARACTER_MODEL_PATHS[normalized_id]
+
+	if ResourceLoader.exists(model_path):
+		var packed_scene := load(model_path) as PackedScene
+		if packed_scene != null:
+			loaded_character_model = packed_scene.instantiate() as Node3D
+			if loaded_character_model != null:
+				loaded_character_model.name = "LoadedCharacterModel"
+				current_model_root.add_child(loaded_character_model)
+				current_fallback_visual.visible = false
+				_fit_loaded_model_to_player(loaded_character_model)
+				print("Modelo 3D do personagem carregado: ", model_path)
+				return
+
+	current_fallback_visual.visible = true
+	_apply_fallback_style(normalized_id)
+	print("Aviso: modelo 3D nao encontrado em ", model_path, ". Usando placeholder simples.")
+
+
+func _clear_loaded_character_model() -> void:
+	if loaded_character_model != null and is_instance_valid(loaded_character_model):
+		loaded_character_model.queue_free()
+	loaded_character_model = null
+
+
+func _get_model_root() -> Node3D:
+	if model_root != null:
+		return model_root
+	return get_node_or_null("VisualRoot/ModelRoot") as Node3D
+
+
+func _get_fallback_visual() -> Node3D:
+	if fallback_visual != null:
+		return fallback_visual
+	return get_node_or_null("VisualRoot/ModelRoot/FallbackVisual") as Node3D
+
+
+func _fit_loaded_model_to_player(model: Node3D) -> void:
+	model.position = Vector3.ZERO
+	model.rotation = Vector3.ZERO
+	model.scale = Vector3.ONE
+
+	var bounds := _calculate_local_mesh_bounds(model)
+	if bounds.size.y <= 0.01:
+		return
+
+	var scale_factor := TARGET_MODEL_HEIGHT / bounds.size.y
+	model.scale = Vector3.ONE * scale_factor
+	model.position.y = -bounds.position.y * scale_factor
+
+
+func _calculate_local_mesh_bounds(root: Node3D) -> AABB:
+	var has_bounds := false
+	var bounds := AABB()
+
+	for mesh_node in root.find_children("*", "MeshInstance3D", true, false):
+		var mesh_instance := mesh_node as MeshInstance3D
+		if mesh_instance == null or mesh_instance.mesh == null:
+			continue
+
+		var local_aabb := mesh_instance.get_aabb()
+		local_aabb.position += mesh_instance.position
+
+		if has_bounds:
+			bounds = bounds.merge(local_aabb)
+		else:
+			bounds = local_aabb
+			has_bounds = true
+
+	return bounds
+
+
+func _get_selected_character_id() -> String:
+	if has_node("/root/GameState"):
+		return get_node("/root/GameState").selected_character_id
+	return "boy_builder"
+
+
+func _apply_fallback_style(character_id: String) -> void:
+	var style := _get_fallback_style(character_id)
+
+	_set_material_color("FallbackBody", style.body)
+	_set_material_color("FallbackHead", style.skin)
+	_set_material_color("FallbackHair", style.hair)
+	_set_material_color("FallbackLeftArm", style.skin)
+	_set_material_color("FallbackRightArm", style.skin)
+	_set_material_color("FallbackLeftLeg", style.body)
+	_set_material_color("FallbackRightLeg", style.body)
+	_set_material_color("FallbackBelt", style.leather)
+
+
+func _get_fallback_style(character_id: String) -> Dictionary:
+	var styles := {
+		"boy_builder": {
+			"body": Color(0.32, 0.45, 0.52, 1),
+			"skin": Color(0.78, 0.58, 0.42, 1),
+			"hair": Color(0.19, 0.11, 0.06, 1),
+			"leather": Color(0.28, 0.16, 0.08, 1),
+		},
+		"girl_builder": {
+			"body": Color(0.36, 0.50, 0.58, 1),
+			"skin": Color(0.80, 0.60, 0.44, 1),
+			"hair": Color(0.23, 0.13, 0.07, 1),
+			"leather": Color(0.32, 0.18, 0.09, 1),
+		},
+	}
+
+	return styles.get(character_id, styles.boy_builder)
+
+
+func _set_material_color(node_name: String, color: Color) -> void:
+	var current_fallback_visual := _get_fallback_visual()
+	if current_fallback_visual == null:
+		return
+
+	var mesh_instance := current_fallback_visual.get_node_or_null(node_name) as MeshInstance3D
+	if mesh_instance == null:
+		return
+
+	var material := StandardMaterial3D.new()
+	material.albedo_color = color
+	material.roughness = 0.82
+	mesh_instance.material_override = material
 
 
 func _apply_gravity(delta: float) -> void:
@@ -96,33 +221,7 @@ func _get_movement_input() -> Vector2:
 	if input_vector == Vector2.ZERO:
 		input_vector = _get_keyboard_fallback_input()
 
-	# print("Movimento detectado: ", input_vector)
 	return input_vector
-
-
-func _store_default_limb_pose() -> void:
-	default_left_arm_rotation = left_arm_pivot.rotation
-	default_right_arm_rotation = right_arm_pivot.rotation
-	default_left_leg_rotation = left_leg_pivot.rotation
-	default_right_leg_rotation = right_leg_pivot.rotation
-
-
-func _animate_walk(delta: float) -> void:
-	var horizontal_speed := Vector2(velocity.x, velocity.z).length()
-	var is_walking := is_on_floor() and horizontal_speed > 0.1
-
-	if is_walking:
-		walk_time += delta * 9.0
-		var swing := sin(walk_time) * 0.55
-		left_arm_pivot.rotation.x = default_left_arm_rotation.x + swing
-		right_arm_pivot.rotation.x = default_right_arm_rotation.x - swing
-		left_leg_pivot.rotation.x = default_left_leg_rotation.x - swing * 0.75
-		right_leg_pivot.rotation.x = default_right_leg_rotation.x + swing * 0.75
-	else:
-		left_arm_pivot.rotation = left_arm_pivot.rotation.lerp(default_left_arm_rotation, delta * 10.0)
-		right_arm_pivot.rotation = right_arm_pivot.rotation.lerp(default_right_arm_rotation, delta * 10.0)
-		left_leg_pivot.rotation = left_leg_pivot.rotation.lerp(default_left_leg_rotation, delta * 10.0)
-		right_leg_pivot.rotation = right_leg_pivot.rotation.lerp(default_right_leg_rotation, delta * 10.0)
 
 
 func _get_keyboard_fallback_input() -> Vector2:
@@ -231,54 +330,3 @@ func _ensure_key_action(action_name: StringName, physical_key: Key) -> void:
 	var key_event := InputEventKey.new()
 	key_event.physical_keycode = physical_key
 	InputMap.action_add_event(action_name, key_event)
-
-
-func _apply_selected_character() -> void:
-	var selected_id := "boy_builder"
-	if has_node("/root/GameState"):
-		selected_id = get_node("/root/GameState").selected_character_id
-
-	var style := _get_character_style(selected_id)
-	_apply_material(body_mesh, style.body)
-	_apply_material(head_mesh, style.skin)
-	_apply_material(hair_mesh, style.hair)
-	_apply_material(left_arm_mesh, style.arm)
-	_apply_material(right_arm_mesh, style.arm)
-	_apply_material(left_leg_mesh, style.leg)
-	_apply_material(right_leg_mesh, style.leg)
-	_set_accessories(style.accessories)
-
-
-func _get_character_style(character_id: String) -> Dictionary:
-	var styles := {
-	"boy_builder": {
-			"body": Color(0.58, 0.06, 0.08, 1),
-			"skin": Color(0.58, 0.06, 0.08, 1),
-			"hair": Color(0.03, 0.13, 0.28, 1),
-			"arm": Color(0.03, 0.13, 0.28, 1),
-			"leg": Color(0.03, 0.13, 0.28, 1),
-			"accessories": ["belt", "adventure_suit"]
-		},
-		"girl_builder": {
-			"body": Color(0.30, 0.46, 0.56, 1),
-			"skin": Color(0.80, 0.60, 0.44, 1),
-			"hair": Color(0.24, 0.14, 0.08, 1),
-			"arm": Color(0.80, 0.60, 0.44, 1),
-			"leg": Color(0.30, 0.46, 0.56, 1),
-			"accessories": ["belt"]
-		}
-	}
-
-	return styles.get(character_id, styles.boy_builder)
-
-
-func _apply_material(mesh_instance: MeshInstance3D, color: Color) -> void:
-	var material := StandardMaterial3D.new()
-	material.albedo_color = color
-	material.roughness = 0.8
-	mesh_instance.material_override = material
-
-
-func _set_accessories(active_accessories: Array) -> void:
-	for accessory in accessory_root.get_children():
-		accessory.visible = active_accessories.has(accessory.name.to_snake_case())
