@@ -1,107 +1,99 @@
-[gd_scene load_steps=13 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/PlayerController.gd" id="1_controller"]
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_player_collision"]
-radius = 0.35
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_collision"]
+radius = 0.45
 height = 1.8
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fallback_body"]
-albedo_color = Color(0.32, 0.45, 0.52, 1)
-roughness = 0.82
+[sub_resource type="BoxMesh" id="BoxMesh_body"]
+size = Vector3(0.8, 1.0, 0.45)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fallback_skin"]
-albedo_color = Color(0.78, 0.58, 0.42, 1)
-roughness = 0.72
+[sub_resource type="BoxMesh" id="BoxMesh_head"]
+size = Vector3(0.62, 0.55, 0.55)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fallback_hair"]
-albedo_color = Color(0.19, 0.11, 0.06, 1)
-roughness = 0.86
+[sub_resource type="BoxMesh" id="BoxMesh_arm"]
+size = Vector3(0.24, 0.9, 0.28)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fallback_leather"]
-albedo_color = Color(0.28, 0.16, 0.08, 1)
-roughness = 0.86
+[sub_resource type="BoxMesh" id="BoxMesh_leg"]
+size = Vector3(0.28, 0.85, 0.32)
 
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_fallback_body"]
-radius = 0.32
-height = 1.05
+[sub_resource type="StandardMaterial3D" id="Material_tunic"]
+albedo_color = Color(0.27, 0.42, 0.48, 1)
+roughness = 0.85
 
-[sub_resource type="SphereMesh" id="SphereMesh_fallback_head"]
-radius = 0.24
-height = 0.48
+[sub_resource type="StandardMaterial3D" id="Material_skin"]
+albedo_color = Color(0.76, 0.56, 0.39, 1)
+roughness = 0.8
 
-[sub_resource type="SphereMesh" id="SphereMesh_fallback_hair"]
-radius = 0.245
-height = 0.18
+[sub_resource type="StandardMaterial3D" id="Material_hair"]
+albedo_color = Color(0.18, 0.1, 0.04, 1)
+roughness = 0.9
 
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_fallback_limb"]
-radius = 0.075
-height = 0.72
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_fallback_leg"]
-radius = 0.095
-height = 0.82
-
-[sub_resource type="BoxMesh" id="BoxMesh_fallback_belt"]
-size = Vector3(0.58, 0.08, 0.22)
+[sub_resource type="StandardMaterial3D" id="Material_leather"]
+albedo_color = Color(0.28, 0.16, 0.07, 1)
+roughness = 0.9
 
 [node name="Player" type="CharacterBody3D"]
 script = ExtResource("1_controller")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
-shape = SubResource("CapsuleShape3D_player_collision")
+shape = SubResource("CapsuleShape3D_collision")
 
 [node name="VisualRoot" type="Node3D" parent="."]
 
-[node name="ModelRoot" type="Node3D" parent="VisualRoot"]
+[node name="Body" type="MeshInstance3D" parent="VisualRoot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.95, 0)
+material_override = SubResource("Material_tunic")
+mesh = SubResource("BoxMesh_body")
 
-[node name="FallbackVisual" type="Node3D" parent="VisualRoot/ModelRoot"]
+[node name="Head" type="MeshInstance3D" parent="VisualRoot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.72, 0)
+material_override = SubResource("Material_skin")
+mesh = SubResource("BoxMesh_head")
 
-[node name="FallbackBody" type="MeshInstance3D" parent="VisualRoot/ModelRoot/FallbackVisual"]
-transform = Transform3D(0.88, 0, 0, 0, 1.06, 0, 0, 0, 0.88, 0, 0.92, 0)
-material_override = SubResource("StandardMaterial3D_fallback_body")
-mesh = SubResource("CapsuleMesh_fallback_body")
+[node name="Hair" type="MeshInstance3D" parent="VisualRoot"]
+transform = Transform3D(1, 0, 0, 0, 0.32, 0, 0, 0, 1, 0, 1.94, -0.02)
+material_override = SubResource("Material_hair")
+mesh = SubResource("BoxMesh_head")
 
-[node name="FallbackHead" type="MeshInstance3D" parent="VisualRoot/ModelRoot/FallbackVisual"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
-material_override = SubResource("StandardMaterial3D_fallback_skin")
-mesh = SubResource("SphereMesh_fallback_head")
+[node name="LeftArmPivot" type="Node3D" parent="VisualRoot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.54, 1.08, 0)
 
-[node name="FallbackHair" type="MeshInstance3D" parent="VisualRoot/ModelRoot/FallbackVisual"]
-transform = Transform3D(1, 0, 0, 0, 0.45, 0, 0, 0, 1, 0, 1.78, -0.02)
-material_override = SubResource("StandardMaterial3D_fallback_hair")
-mesh = SubResource("SphereMesh_fallback_hair")
+[node name="LeftArm" type="MeshInstance3D" parent="VisualRoot/LeftArmPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.22, 0)
+material_override = SubResource("Material_skin")
+mesh = SubResource("BoxMesh_arm")
 
-[node name="FallbackLeftArm" type="MeshInstance3D" parent="VisualRoot/ModelRoot/FallbackVisual"]
-transform = Transform3D(0.94693, 0.321439, 0, -0.321439, 0.94693, 0, 0, 0, 1, -0.49, 1.02, 0)
-material_override = SubResource("StandardMaterial3D_fallback_skin")
-mesh = SubResource("CapsuleMesh_fallback_limb")
+[node name="RightArmPivot" type="Node3D" parent="VisualRoot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.54, 1.08, 0)
 
-[node name="FallbackRightArm" type="MeshInstance3D" parent="VisualRoot/ModelRoot/FallbackVisual"]
-transform = Transform3D(0.94693, -0.321439, 0, 0.321439, 0.94693, 0, 0, 0, 1, 0.49, 1.02, 0)
-material_override = SubResource("StandardMaterial3D_fallback_skin")
-mesh = SubResource("CapsuleMesh_fallback_limb")
+[node name="RightArm" type="MeshInstance3D" parent="VisualRoot/RightArmPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.22, 0)
+material_override = SubResource("Material_skin")
+mesh = SubResource("BoxMesh_arm")
 
-[node name="FallbackLeftLeg" type="MeshInstance3D" parent="VisualRoot/ModelRoot/FallbackVisual"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.16, 0.34, 0)
-material_override = SubResource("StandardMaterial3D_fallback_body")
-mesh = SubResource("CapsuleMesh_fallback_leg")
+[node name="LeftLegPivot" type="Node3D" parent="VisualRoot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2, 0.44, 0)
 
-[node name="FallbackRightLeg" type="MeshInstance3D" parent="VisualRoot/ModelRoot/FallbackVisual"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.16, 0.34, 0)
-material_override = SubResource("StandardMaterial3D_fallback_body")
-mesh = SubResource("CapsuleMesh_fallback_leg")
+[node name="LeftLeg" type="MeshInstance3D" parent="VisualRoot/LeftLegPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.32, 0)
+material_override = SubResource("Material_leather")
+mesh = SubResource("BoxMesh_leg")
 
-[node name="FallbackBelt" type="MeshInstance3D" parent="VisualRoot/ModelRoot/FallbackVisual"]
-transform = Transform3D(1.15, 0, 0, 0, 0.55, 0, 0, 0, 1, 0, 0.95, -0.01)
-material_override = SubResource("StandardMaterial3D_fallback_leather")
-mesh = SubResource("BoxMesh_fallback_belt")
+[node name="RightLegPivot" type="Node3D" parent="VisualRoot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.2, 0.44, 0)
+
+[node name="RightLeg" type="MeshInstance3D" parent="VisualRoot/RightLegPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.32, 0)
+material_override = SubResource("Material_leather")
+mesh = SubResource("BoxMesh_leg")
 
 [node name="CameraPivot" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
 
 [node name="Camera3D" type="Camera3D" parent="CameraPivot"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 6)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 7)
 current = true
 fov = 55.0

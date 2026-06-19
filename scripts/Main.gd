@@ -2,4 +2,4 @@ extends Node
 
 
 func _ready() -> void:
-	print("Pequenos Construtores: cena principal carregada.")
+	print("Pequenos Construtores iniciado.")

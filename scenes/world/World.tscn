@@ -1,381 +1,108 @@
-[gd_scene load_steps=31 format=3]
+[gd_scene load_steps=12 format=3]
 
-[ext_resource type="Script" path="res://scripts/world/WorldManager.gd" id="1_world_manager"]
-[ext_resource type="Material" path="res://assets/materials/sand.tres" id="2_sand"]
-[ext_resource type="Material" path="res://assets/materials/dirt.tres" id="3_dirt"]
-[ext_resource type="Material" path="res://assets/materials/stone.tres" id="4_stone"]
-[ext_resource type="Material" path="res://assets/materials/wood.tres" id="5_wood"]
-[ext_resource type="Material" path="res://assets/materials/dry_grass.tres" id="6_dry_grass"]
-[ext_resource type="Material" path="res://assets/materials/water.tres" id="7_water"]
-[ext_resource type="Material" path="res://assets/materials/olive_leaf.tres" id="8_olive_leaf"]
-[ext_resource type="Material" path="res://assets/materials/palm_leaf.tres" id="9_palm_leaf"]
-[ext_resource type="Material" path="res://assets/materials/light_wood.tres" id="10_light_wood"]
+[ext_resource type="Script" path="res://scripts/world/WorldManager.gd" id="1_world"]
 
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_biblical_valley"]
-sky_top_color = Color(0.40, 0.62, 0.86, 1)
-sky_horizon_color = Color(0.95, 0.78, 0.52, 1)
-sky_curve = 0.18
-sky_energy_multiplier = 1.45
-ground_bottom_color = Color(0.58, 0.45, 0.30, 1)
-ground_horizon_color = Color(0.76, 0.62, 0.42, 1)
-ground_curve = 0.25
-sun_angle_max = 4.0
-sun_curve = 0.02
+[sub_resource type="StandardMaterial3D" id="Material_sand"]
+albedo_color = Color(0.75, 0.61, 0.39, 1)
+roughness = 0.9
 
-[sub_resource type="Sky" id="Sky_biblical_valley"]
-sky_material = SubResource("ProceduralSkyMaterial_biblical_valley")
+[sub_resource type="StandardMaterial3D" id="Material_dry_grass"]
+albedo_color = Color(0.46, 0.48, 0.25, 1)
+roughness = 0.9
 
-[sub_resource type="Environment" id="Environment_biblical_valley"]
-background_mode = 2
-sky = SubResource("Sky_biblical_valley")
-ambient_light_source = 2
-ambient_light_color = Color(0.96, 0.90, 0.78, 1)
-ambient_light_energy = 1.55
-reflected_light_source = 2
-tonemap_mode = 2
-glow_enabled = false
+[sub_resource type="StandardMaterial3D" id="Material_stone"]
+albedo_color = Color(0.43, 0.39, 0.33, 1)
+roughness = 0.88
 
-[sub_resource type="BoxMesh" id="BoxMesh_main_ground"]
-material = ExtResource("2_sand")
-size = Vector3(64, 0.4, 64)
+[sub_resource type="StandardMaterial3D" id="Material_wood"]
+albedo_color = Color(0.34, 0.2, 0.1, 1)
+roughness = 0.86
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_main_ground"]
-size = Vector3(64, 0.4, 64)
+[sub_resource type="BoxShape3D" id="BoxShape_ground"]
+size = Vector3(36, 0.4, 36)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ground"]
+size = Vector3(36, 0.4, 36)
 
 [sub_resource type="BoxMesh" id="BoxMesh_build_area"]
-material = ExtResource("2_sand")
-size = Vector3(28, 0.08, 22)
+size = Vector3(12, 0.08, 12)
 
-[sub_resource type="BoxMesh" id="BoxMesh_earth_patch"]
-material = ExtResource("3_dirt")
-size = Vector3(12, 0.08, 8)
-
-[sub_resource type="BoxMesh" id="BoxMesh_grass_patch"]
-material = ExtResource("6_dry_grass")
-size = Vector3(9, 0.07, 6)
-
-[sub_resource type="BoxMesh" id="BoxMesh_ridge_long"]
-material = ExtResource("3_dirt")
-size = Vector3(12, 3.4, 58)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_ridge_long"]
-size = Vector3(12, 3.4, 58)
-
-[sub_resource type="BoxMesh" id="BoxMesh_ridge_back"]
-material = ExtResource("3_dirt")
-size = Vector3(54, 3.2, 10)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_ridge_back"]
-size = Vector3(54, 3.2, 10)
-
-[sub_resource type="SphereMesh" id="SphereMesh_soft_mound"]
-material = ExtResource("3_dirt")
-radius = 2.0
-height = 1.0
-
-[sub_resource type="BoxMesh" id="BoxMesh_stream"]
-material = ExtResource("7_water")
-size = Vector3(4.2, 0.05, 39)
-
-[sub_resource type="BoxMesh" id="BoxMesh_stream_bank"]
-material = ExtResource("3_dirt")
-size = Vector3(1.2, 0.08, 38)
-
-[sub_resource type="SphereMesh" id="SphereMesh_rock"]
-material = ExtResource("4_stone")
-radius = 0.9
-height = 1.15
-
-[sub_resource type="SphereShape3D" id="SphereShape3D_rock"]
-radius = 0.9
+[sub_resource type="BoxMesh" id="BoxMesh_block"]
+size = Vector3(1, 1, 1)
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_trunk"]
-material = ExtResource("5_wood")
 top_radius = 0.18
-bottom_radius = 0.32
-height = 2.2
+bottom_radius = 0.24
+height = 2.0
 
-[sub_resource type="CylinderShape3D" id="CylinderShape3D_trunk"]
-radius = 0.32
-height = 2.2
-
-[sub_resource type="SphereMesh" id="SphereMesh_olive_canopy"]
-material = ExtResource("8_olive_leaf")
-radius = 1.0
-height = 0.9
-
-[sub_resource type="BoxMesh" id="BoxMesh_palm_frond"]
-material = ExtResource("9_palm_leaf")
-size = Vector3(0.55, 0.08, 2.4)
-
-[sub_resource type="BoxMesh" id="BoxMesh_dry_branch"]
-material = ExtResource("5_wood")
-size = Vector3(0.18, 0.18, 1.8)
-
-[sub_resource type="BoxMesh" id="BoxMesh_marker_post"]
-material = ExtResource("10_light_wood")
-size = Vector3(0.22, 1.1, 0.22)
-
-[sub_resource type="BoxMesh" id="BoxMesh_marker_beam"]
-material = ExtResource("10_light_wood")
-size = Vector3(6.4, 0.18, 0.28)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_boundary"]
-size = Vector3(2, 5, 70)
+[sub_resource type="BoxMesh" id="BoxMesh_leaves"]
+size = Vector3(1.4, 0.8, 1.4)
 
 [node name="World" type="Node3D"]
-script = ExtResource("1_world_manager")
+script = ExtResource("1_world")
 
 [node name="Environment" type="Node3D" parent="."]
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="Environment"]
-environment = SubResource("Environment_biblical_valley")
+[node name="Sun" type="DirectionalLight3D" parent="Environment"]
+transform = Transform3D(0.707107, -0.353553, 0.612372, 0, 0.866025, 0.5, -0.707107, -0.353553, 0.612372, 0, 6, 0)
+light_color = Color(1, 0.88, 0.68, 1)
+light_energy = 1.6
+shadow_enabled = true
 
-[node name="SunLight" type="DirectionalLight3D" parent="Environment"]
-transform = Transform3D(0.875, -0.332, 0.351, 0, 0.727, 0.686, -0.485, -0.600, 0.636, 0, 12, 0)
-light_color = Color(1, 0.88, 0.66, 1)
-light_energy = 0.35
-shadow_enabled = false
-directional_shadow_mode = 0
-directional_shadow_max_distance = 55.0
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Environment"]
 
 [node name="Terrain" type="Node3D" parent="."]
 
 [node name="Ground" type="StaticBody3D" parent="Terrain"]
 
-[node name="Mesh" type="MeshInstance3D" parent="Terrain/Ground"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
-mesh = SubResource("BoxMesh_main_ground")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Terrain/Ground"]
+shape = SubResource("BoxShape_ground")
 
-[node name="Collision" type="CollisionShape3D" parent="Terrain/Ground"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
-shape = SubResource("BoxShape3D_main_ground")
+[node name="GroundMesh" type="MeshInstance3D" parent="Terrain/Ground"]
+material_override = SubResource("Material_sand")
+mesh = SubResource("BoxMesh_ground")
 
-[node name="LeftRidge" type="StaticBody3D" parent="Terrain"]
-transform = Transform3D(0.985, 0, -0.174, 0, 1, 0, 0.174, 0, 0.985, -30, 1.25, 0)
-
-[node name="Mesh" type="MeshInstance3D" parent="Terrain/LeftRidge"]
-mesh = SubResource("BoxMesh_ridge_long")
-
-[node name="Collision" type="CollisionShape3D" parent="Terrain/LeftRidge"]
-shape = SubResource("BoxShape3D_ridge_long")
-
-[node name="RightRidge" type="StaticBody3D" parent="Terrain"]
-transform = Transform3D(0.985, 0, 0.174, 0, 1, 0, -0.174, 0, 0.985, 30, 1.25, 0)
-
-[node name="Mesh" type="MeshInstance3D" parent="Terrain/RightRidge"]
-mesh = SubResource("BoxMesh_ridge_long")
-
-[node name="Collision" type="CollisionShape3D" parent="Terrain/RightRidge"]
-shape = SubResource("BoxShape3D_ridge_long")
-
-[node name="NorthRidge" type="StaticBody3D" parent="Terrain"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, -30)
-
-[node name="Mesh" type="MeshInstance3D" parent="Terrain/NorthRidge"]
-mesh = SubResource("BoxMesh_ridge_back")
-
-[node name="Collision" type="CollisionShape3D" parent="Terrain/NorthRidge"]
-shape = SubResource("BoxShape3D_ridge_back")
-
-[node name="SoftMounds" type="Node3D" parent="Terrain"]
-
-[node name="MoundWest" type="MeshInstance3D" parent="Terrain/SoftMounds"]
-transform = Transform3D(2.8, 0, 0, 0, 0.55, 0, 0, 0, 1.6, -17, 0.22, -12)
-mesh = SubResource("SphereMesh_soft_mound")
-
-[node name="MoundEast" type="MeshInstance3D" parent="Terrain/SoftMounds"]
-transform = Transform3D(2.2, 0, 0, 0, 0.48, 0, 0, 0, 1.4, 18, 0.20, 11)
-mesh = SubResource("SphereMesh_soft_mound")
-
-[node name="BuildArea" type="Node3D" parent="."]
-
-[node name="FlatArkFutureArea" type="MeshInstance3D" parent="BuildArea"]
-transform = Transform3D(0.966, 0, 0.259, 0, 1, 0, -0.259, 0, 0.966, 1.5, 0.035, -1.5)
+[node name="BuildArea" type="MeshInstance3D" parent="Terrain"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.24, 0)
+material_override = SubResource("Material_dry_grass")
 mesh = SubResource("BoxMesh_build_area")
 
-[node name="EarthPatches" type="Node3D" parent="BuildArea"]
+[node name="BlockSamples" type="Node3D" parent="."]
 
-[node name="Patch01" type="MeshInstance3D" parent="BuildArea/EarthPatches"]
-transform = Transform3D(0.906, 0, -0.423, 0, 1, 0, 0.423, 0, 0.906, -11, 0.045, 8)
-mesh = SubResource("BoxMesh_earth_patch")
+[node name="StoneBlock" type="MeshInstance3D" parent="BlockSamples"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.8, -3)
+material_override = SubResource("Material_stone")
+mesh = SubResource("BoxMesh_block")
 
-[node name="Patch02" type="MeshInstance3D" parent="BuildArea/EarthPatches"]
-transform = Transform3D(0.819, 0, 0.574, 0, 1, 0, -0.574, 0, 0.819, 12, 0.045, -8)
-mesh = SubResource("BoxMesh_grass_patch")
-
-[node name="ArkSiteMarker" type="Node3D" parent="BuildArea"]
-
-[node name="PostA" type="MeshInstance3D" parent="BuildArea/ArkSiteMarker"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2, 0.55, -2.0)
-mesh = SubResource("BoxMesh_marker_post")
-
-[node name="PostB" type="MeshInstance3D" parent="BuildArea/ArkSiteMarker"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2, 0.55, -2.0)
-mesh = SubResource("BoxMesh_marker_post")
-
-[node name="FrontBeam" type="MeshInstance3D" parent="BuildArea/ArkSiteMarker"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.18, -2.0)
-mesh = SubResource("BoxMesh_marker_beam")
-
-[node name="Water" type="Node3D" parent="."]
-
-[node name="Stream" type="MeshInstance3D" parent="Water"]
-transform = Transform3D(0.906, 0, 0.423, 0, 1, 0, -0.423, 0, 0.906, -14, 0.04, 1)
-mesh = SubResource("BoxMesh_stream")
-
-[node name="WestBank" type="MeshInstance3D" parent="Water"]
-transform = Transform3D(0.906, 0, 0.423, 0, 1, 0, -0.423, 0, 0.906, -16.1, 0.06, 0.7)
-mesh = SubResource("BoxMesh_stream_bank")
-
-[node name="EastBank" type="MeshInstance3D" parent="Water"]
-transform = Transform3D(0.906, 0, 0.423, 0, 1, 0, -0.423, 0, 0.906, -11.9, 0.06, 1.3)
-mesh = SubResource("BoxMesh_stream_bank")
+[node name="WoodBlock" type="MeshInstance3D" parent="BlockSamples"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.8, 0.8, -3)
+material_override = SubResource("Material_wood")
+mesh = SubResource("BoxMesh_block")
 
 [node name="Decorations" type="Node3D" parent="."]
 
-[node name="Rocks" type="Node3D" parent="."]
+[node name="Tree1" type="Node3D" parent="Decorations"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.2, -7)
 
-[node name="Rock01" type="StaticBody3D" parent="Rocks"]
-transform = Transform3D(1.5, 0, 0, 0, 0.65, 0, 0, 0, 1.1, -20, 0.55, -10)
-
-[node name="Mesh" type="MeshInstance3D" parent="Rocks/Rock01"]
-mesh = SubResource("SphereMesh_rock")
-
-[node name="Collision" type="CollisionShape3D" parent="Rocks/Rock01"]
-shape = SubResource("SphereShape3D_rock")
-
-[node name="Rock02" type="StaticBody3D" parent="Rocks"]
-transform = Transform3D(0.8, 0, 0, 0, 0.45, 0, 0, 0, 0.95, 18, 0.35, -13)
-
-[node name="Mesh" type="MeshInstance3D" parent="Rocks/Rock02"]
-mesh = SubResource("SphereMesh_rock")
-
-[node name="Collision" type="CollisionShape3D" parent="Rocks/Rock02"]
-shape = SubResource("SphereShape3D_rock")
-
-[node name="Rock03" type="StaticBody3D" parent="Rocks"]
-transform = Transform3D(0.65, 0, 0, 0, 0.35, 0, 0, 0, 0.8, 13, 0.32, 17)
-
-[node name="Mesh" type="MeshInstance3D" parent="Rocks/Rock03"]
-mesh = SubResource("SphereMesh_rock")
-
-[node name="Collision" type="CollisionShape3D" parent="Rocks/Rock03"]
-shape = SubResource("SphereShape3D_rock")
-
-[node name="Rock04" type="StaticBody3D" parent="Rocks"]
-transform = Transform3D(1.1, 0, 0, 0, 0.55, 0, 0, 0, 0.9, -5, 0.45, 20)
-
-[node name="Mesh" type="MeshInstance3D" parent="Rocks/Rock04"]
-mesh = SubResource("SphereMesh_rock")
-
-[node name="Collision" type="CollisionShape3D" parent="Rocks/Rock04"]
-shape = SubResource("SphereShape3D_rock")
-
-[node name="Trees" type="Node3D" parent="."]
-
-[node name="OliveTree01" type="StaticBody3D" parent="Trees"]
-transform = Transform3D(1.0, 0, 0, 0, 1.0, 0, 0, 0, 1.0, -20, 0, 12)
-
-[node name="Trunk" type="MeshInstance3D" parent="Trees/OliveTree01"]
-transform = Transform3D(0.82, 0, -0.18, 0, 1, 0, 0.18, 0, 0.82, 0, 1.1, 0)
+[node name="Trunk" type="MeshInstance3D" parent="Decorations/Tree1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+material_override = SubResource("Material_wood")
 mesh = SubResource("CylinderMesh_trunk")
 
-[node name="TrunkCollision" type="CollisionShape3D" parent="Trees/OliveTree01"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 0)
-shape = SubResource("CylinderShape3D_trunk")
+[node name="Leaves" type="MeshInstance3D" parent="Decorations/Tree1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.25, 0)
+material_override = SubResource("Material_dry_grass")
+mesh = SubResource("BoxMesh_leaves")
 
-[node name="CanopyA" type="MeshInstance3D" parent="Trees/OliveTree01"]
-transform = Transform3D(1.4, 0, 0, 0, 0.75, 0, 0, 0, 1.0, -0.35, 2.45, 0)
-mesh = SubResource("SphereMesh_olive_canopy")
+[node name="Tree2" type="Node3D" parent="Decorations"]
+transform = Transform3D(0.85, 0, 0, 0, 0.85, 0, 0, 0, 0.85, -9, 0.2, 7)
 
-[node name="CanopyB" type="MeshInstance3D" parent="Trees/OliveTree01"]
-transform = Transform3D(1.0, 0, 0, 0, 0.62, 0, 0, 0, 1.25, 0.55, 2.35, 0.18)
-mesh = SubResource("SphereMesh_olive_canopy")
-
-[node name="OliveTree02" type="StaticBody3D" parent="Trees"]
-transform = Transform3D(0.875, 0, -0.485, 0, 1, 0, 0.485, 0, 0.875, 19, 0, 14)
-
-[node name="Trunk" type="MeshInstance3D" parent="Trees/OliveTree02"]
-transform = Transform3D(0.75, 0, 0.16, 0, 0.95, 0, -0.16, 0, 0.75, 0, 1.0, 0)
+[node name="Trunk" type="MeshInstance3D" parent="Decorations/Tree2"]
+transform = Transform3D(1, 0, 0, 0, 1.1, 0, 0, 0, 1, 0, 1, 0)
+material_override = SubResource("Material_wood")
 mesh = SubResource("CylinderMesh_trunk")
 
-[node name="TrunkCollision" type="CollisionShape3D" parent="Trees/OliveTree02"]
-transform = Transform3D(1, 0, 0, 0, 0.95, 0, 0, 0, 1, 0, 1.05, 0)
-shape = SubResource("CylinderShape3D_trunk")
-
-[node name="CanopyA" type="MeshInstance3D" parent="Trees/OliveTree02"]
-transform = Transform3D(1.2, 0, 0, 0, 0.70, 0, 0, 0, 1.0, 0.1, 2.35, 0)
-mesh = SubResource("SphereMesh_olive_canopy")
-
-[node name="DryTree01" type="StaticBody3D" parent="Trees"]
-transform = Transform3D(0.966, 0, 0.259, 0, 1, 0, -0.259, 0, 0.966, -24, 0, -15)
-
-[node name="Trunk" type="MeshInstance3D" parent="Trees/DryTree01"]
-transform = Transform3D(0.65, 0, -0.2, 0, 1.1, 0, 0.2, 0, 0.65, 0, 1.0, 0)
-mesh = SubResource("CylinderMesh_trunk")
-
-[node name="TrunkCollision" type="CollisionShape3D" parent="Trees/DryTree01"]
-transform = Transform3D(1, 0, 0, 0, 0.95, 0, 0, 0, 1, 0, 1.0, 0)
-shape = SubResource("CylinderShape3D_trunk")
-
-[node name="BranchA" type="MeshInstance3D" parent="Trees/DryTree01"]
-transform = Transform3D(0.574, 0.0, 0.819, 0.0, 1, 0.0, -0.819, 0.0, 0.574, 0.35, 2.05, 0.05)
-mesh = SubResource("BoxMesh_dry_branch")
-
-[node name="BranchB" type="MeshInstance3D" parent="Trees/DryTree01"]
-transform = Transform3D(0.5, 0.0, -0.866, 0.0, 1, 0.0, 0.866, 0.0, 0.5, -0.35, 1.8, 0.0)
-mesh = SubResource("BoxMesh_dry_branch")
-
-[node name="PalmTree01" type="StaticBody3D" parent="Trees"]
-transform = Transform3D(0.906, 0, -0.423, 0, 1, 0, 0.423, 0, 0.906, 23, 0, -7)
-
-[node name="Trunk" type="MeshInstance3D" parent="Trees/PalmTree01"]
-transform = Transform3D(0.72, 0, 0.1, 0, 1.35, 0, -0.1, 0, 0.72, 0, 1.45, 0)
-mesh = SubResource("CylinderMesh_trunk")
-
-[node name="TrunkCollision" type="CollisionShape3D" parent="Trees/PalmTree01"]
-transform = Transform3D(1, 0, 0, 0, 1.25, 0, 0, 0, 1, 0, 1.35, 0)
-shape = SubResource("CylinderShape3D_trunk")
-
-[node name="FrondA" type="MeshInstance3D" parent="Trees/PalmTree01"]
-transform = Transform3D(1, 0, 0, 0, 0.7, 0.25, 0, -0.25, 0.7, 0, 3.0, -0.8)
-mesh = SubResource("BoxMesh_palm_frond")
-
-[node name="FrondB" type="MeshInstance3D" parent="Trees/PalmTree01"]
-transform = Transform3D(0, 0, 1, 0.2, 0.75, 0, -1, 0.2, 0, 0.85, 2.95, 0)
-mesh = SubResource("BoxMesh_palm_frond")
-
-[node name="FrondC" type="MeshInstance3D" parent="Trees/PalmTree01"]
-transform = Transform3D(-1, 0, 0, 0, 0.72, -0.25, 0, -0.25, -0.72, 0, 2.95, 0.8)
-mesh = SubResource("BoxMesh_palm_frond")
-
-[node name="FrondD" type="MeshInstance3D" parent="Trees/PalmTree01"]
-transform = Transform3D(0, 0, -1, -0.2, 0.75, 0, 1, 0.2, 0, -0.85, 2.95, 0)
-mesh = SubResource("BoxMesh_palm_frond")
-
-[node name="Boundaries" type="Node3D" parent="."]
-
-[node name="WestBoundary" type="StaticBody3D" parent="Boundaries"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -34, 1.8, 0)
-
-[node name="Collision" type="CollisionShape3D" parent="Boundaries/WestBoundary"]
-shape = SubResource("BoxShape3D_boundary")
-
-[node name="EastBoundary" type="StaticBody3D" parent="Boundaries"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34, 1.8, 0)
-
-[node name="Collision" type="CollisionShape3D" parent="Boundaries/EastBoundary"]
-shape = SubResource("BoxShape3D_boundary")
-
-[node name="NorthBoundary" type="StaticBody3D" parent="Boundaries"]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 1.8, -34)
-
-[node name="Collision" type="CollisionShape3D" parent="Boundaries/NorthBoundary"]
-shape = SubResource("BoxShape3D_boundary")
-
-[node name="SouthBoundary" type="StaticBody3D" parent="Boundaries"]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 1.8, 34)
-
-[node name="Collision" type="CollisionShape3D" parent="Boundaries/SouthBoundary"]
-shape = SubResource("BoxShape3D_boundary")
+[node name="Leaves" type="MeshInstance3D" parent="Decorations/Tree2"]
+transform = Transform3D(1.2, 0, 0, 0, 0.8, 0, 0, 0, 1.2, 0, 2.35, 0)
+material_override = SubResource("Material_dry_grass")
+mesh = SubResource("BoxMesh_leaves")

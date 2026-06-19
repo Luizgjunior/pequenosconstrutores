@@ -1,40 +1,23 @@
 extends Control
 
 
-const CHARACTER_SELECT_SCENE_PATH := "res://scenes/ui/CharacterSelect.tscn"
+const GAME_SCENE := "res://scenes/Game.tscn"
 
-@onready var new_game_button: Button = %NewGameButton
-@onready var continue_button: Button = %ContinueButton
-@onready var free_build_button: Button = %FreeBuildButton
-@onready var settings_button: Button = %SettingsButton
-@onready var exit_button: Button = %ExitButton
+@onready var new_game_button: Button = $Center/Panel/VBox/NewGameButton
+@onready var quit_button: Button = $Center/Panel/VBox/QuitButton
 
 
 func _ready() -> void:
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	new_game_button.pressed.connect(_on_new_game_pressed)
-	continue_button.pressed.connect(_on_continue_pressed)
-	free_build_button.pressed.connect(_on_free_build_pressed)
-	settings_button.pressed.connect(_on_settings_pressed)
-	exit_button.pressed.connect(_on_exit_pressed)
+	quit_button.pressed.connect(_on_quit_pressed)
 
 
 func _on_new_game_pressed() -> void:
-	print("Novo Jogo selecionado. Abrindo escolha de personagem...")
-	get_tree().change_scene_to_file(CHARACTER_SELECT_SCENE_PATH)
+	print("Novo Jogo selecionado.")
+	get_tree().change_scene_to_file(GAME_SCENE)
 
 
-func _on_continue_pressed() -> void:
-	print("Continuar selecionado. Salvamento local ainda será implementado.")
-
-
-func _on_free_build_pressed() -> void:
-	print("Modo Construção Livre selecionado. Modo ainda será implementado.")
-
-
-func _on_settings_pressed() -> void:
-	print("Configurações selecionadas. Tela ainda será implementada.")
-
-
-func _on_exit_pressed() -> void:
-	print("Sair selecionado. Encerrando o jogo quando permitido pela plataforma.")
+func _on_quit_pressed() -> void:
+	print("Saindo do jogo.")
 	get_tree().quit()
