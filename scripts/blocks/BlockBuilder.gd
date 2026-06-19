@@ -11,6 +11,11 @@ const BUILD_LIMIT := 16.0
 var block_mesh := BoxMesh.new()
 var block_shape := BoxShape3D.new()
 var block_material := StandardMaterial3D.new()
+var preview_material := StandardMaterial3D.new()
+var blocked_preview_material := StandardMaterial3D.new()
+var arrow_material := StandardMaterial3D.new()
+var preview_block: MeshInstance3D
+var preview_arrow: MeshInstance3D
 var player: CharacterBody3D
 var camera: Camera3D
 
@@ -24,6 +29,11 @@ func _ready() -> void:
 	block_shape.size = Vector3.ONE * BLOCK_SIZE
 	block_material.albedo_color = Color(0.45, 0.27, 0.12, 1)
 	block_material.roughness = 0.9
+	_setup_preview()
+
+
+func _process(_delta: float) -> void:
+	_update_preview()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -69,6 +79,58 @@ func remove_block_from_camera() -> void:
 	var collider := hit.get("collider") as Node
 	if collider != null and collider.is_in_group("placed_blocks"):
 		collider.queue_free()
+
+
+func _setup_preview() -> void:
+	preview_material.albedo_color = Color(0.9, 0.72, 0.35, 0.42)
+	preview_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	preview_material.roughness = 0.8
+
+	blocked_preview_material.albedo_color = Color(0.9, 0.18, 0.12, 0.35)
+	blocked_preview_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	blocked_preview_material.roughness = 0.8
+
+	arrow_material.albedo_color = Color(0.98, 0.86, 0.36, 1)
+	arrow_material.roughness = 0.7
+
+	preview_block = MeshInstance3D.new()
+	preview_block.name = "BuildPreviewBlock"
+	preview_block.mesh = block_mesh
+	preview_block.material_override = preview_material
+	preview_block.visible = false
+	add_child(preview_block)
+
+	var arrow_mesh := CylinderMesh.new()
+	arrow_mesh.top_radius = 0.0
+	arrow_mesh.bottom_radius = 0.18
+	arrow_mesh.height = 0.42
+
+	preview_arrow = MeshInstance3D.new()
+	preview_arrow.name = "BuildPreviewArrow"
+	preview_arrow.mesh = arrow_mesh
+	preview_arrow.material_override = arrow_material
+	preview_arrow.visible = false
+	add_child(preview_arrow)
+
+
+func _update_preview() -> void:
+	if preview_block == null or preview_arrow == null:
+		return
+
+	var hit := _raycast_from_camera()
+	if hit.is_empty():
+		preview_block.visible = false
+		preview_arrow.visible = false
+		return
+
+	var block_position := _get_place_position(hit)
+	var can_place := _can_place_at(block_position)
+	preview_block.global_position = block_position
+	preview_block.material_override = preview_material if can_place else blocked_preview_material
+	preview_block.visible = true
+
+	preview_arrow.global_position = block_position + Vector3(0.0, 0.95, 0.0)
+	preview_arrow.visible = can_place
 
 
 func _raycast_from_camera() -> Dictionary:

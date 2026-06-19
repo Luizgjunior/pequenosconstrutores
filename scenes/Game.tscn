@@ -17,3 +17,23 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 6)
 script = ExtResource("4_block_builder")
 
 [node name="PlacedBlocks" type="Node3D" parent="BlockBuilder"]
+
+[node name="AimLayer" type="CanvasLayer" parent="."]
+
+[node name="Crosshair" type="Label" parent="AimLayer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -9.0
+offset_top = -18.0
+offset_right = 9.0
+offset_bottom = 18.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.98, 0.9, 0.62, 0.95)
+theme_override_font_sizes/font_size = 28
+text = "+"
+horizontal_alignment = 1
+vertical_alignment = 1
