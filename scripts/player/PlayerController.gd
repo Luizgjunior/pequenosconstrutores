@@ -216,7 +216,7 @@ func _ensure_key_action(action_name: StringName, physical_key: Key) -> void:
 
 
 func _apply_selected_character() -> void:
-	var selected_id := "explorer"
+	var selected_id := "boy_builder"
 	if has_node("/root/GameState"):
 		selected_id = get_node("/root/GameState").selected_character_id
 
@@ -233,63 +233,21 @@ func _apply_selected_character() -> void:
 
 func _get_character_style(character_id: String) -> Dictionary:
 	var styles := {
-		"explorer": {
-			"body": Color(0.10, 0.42, 0.28, 1),
-			"skin": Color(0.78, 0.56, 0.38, 1),
-			"hair": Color(0.18, 0.10, 0.05, 1),
-			"accessories": ["glasses", "hat", "cape"]
-		},
-		"princess": {
-			"body": Color(0.92, 0.38, 0.68, 1),
-			"skin": Color(0.80, 0.58, 0.42, 1),
-			"hair": Color(0.12, 0.07, 0.04, 1),
-			"accessories": ["crown", "dress"]
-		},
-		"helmet": {
-			"body": Color(0.95, 0.72, 0.22, 1),
-			"skin": Color(0.72, 0.50, 0.34, 1),
-			"hair": Color(0.05, 0.05, 0.06, 1),
-			"accessories": ["helmet", "belt"]
-		},
-		"blue": {
-			"body": Color(0.15, 0.52, 0.82, 1),
-			"skin": Color(0.76, 0.55, 0.39, 1),
-			"hair": Color(0.16, 0.09, 0.04, 1),
-			"accessories": ["glasses"]
-		},
-		"red": {
-			"body": Color(0.86, 0.18, 0.14, 1),
-			"skin": Color(0.78, 0.54, 0.39, 1),
-			"hair": Color(0.04, 0.03, 0.03, 1),
+		"boy_builder": {
+			"body": Color(0.23, 0.39, 0.50, 1),
+			"skin": Color(0.78, 0.58, 0.42, 1),
+			"hair": Color(0.22, 0.13, 0.07, 1),
 			"accessories": ["belt"]
 		},
-		"pink": {
-			"body": Color(0.95, 0.30, 0.75, 1),
-			"skin": Color(0.86, 0.65, 0.50, 1),
-			"hair": Color(0.95, 0.82, 0.45, 1),
-			"accessories": ["glasses"]
-		},
-		"black": {
-			"body": Color(0.04, 0.04, 0.05, 1),
-			"skin": Color(0.70, 0.48, 0.32, 1),
-			"hair": Color(0.02, 0.02, 0.02, 1),
-			"accessories": ["mask", "cape"]
-		},
-		"green": {
-			"body": Color(0.20, 0.72, 0.30, 1),
-			"skin": Color(0.74, 0.52, 0.35, 1),
-			"hair": Color(0.16, 0.34, 0.10, 1),
-			"accessories": ["crown", "belt"]
-		},
-		"builder": {
-			"body": Color(0.15, 0.50, 0.78, 1),
-			"skin": Color(0.82, 0.62, 0.45, 1),
-			"hair": Color(0.16, 0.10, 0.06, 1),
-			"accessories": ["helmet", "belt"]
+		"girl_builder": {
+			"body": Color(0.30, 0.46, 0.56, 1),
+			"skin": Color(0.80, 0.60, 0.44, 1),
+			"hair": Color(0.24, 0.14, 0.08, 1),
+			"accessories": ["belt"]
 		}
 	}
 
-	return styles.get(character_id, styles.explorer)
+	return styles.get(character_id, styles.boy_builder)
 
 
 func _apply_material(mesh_instance: MeshInstance3D, color: Color) -> void:

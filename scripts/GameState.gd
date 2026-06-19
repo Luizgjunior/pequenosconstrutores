@@ -1,7 +1,7 @@
 extends Node
 
 
-var selected_character_id := "explorer"
+var selected_character_id := "boy_builder"
 
 
 func select_character(character_id: String) -> void:

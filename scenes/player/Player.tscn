@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/PlayerController.gd" id="1_controller"]
 
@@ -42,26 +42,8 @@ height = 0.82
 albedo_color = Color(0.03, 0.03, 0.035, 1)
 roughness = 0.8
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gold"]
-albedo_color = Color(0.95, 0.72, 0.22, 1)
-roughness = 0.65
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hat"]
-albedo_color = Color(0.18, 0.11, 0.07, 1)
-roughness = 0.85
-
-[sub_resource type="BoxMesh" id="BoxMesh_thin"]
-size = Vector3(0.36, 0.08, 0.08)
-
 [sub_resource type="BoxMesh" id="BoxMesh_accessory"]
 size = Vector3(0.5, 0.08, 0.24)
-
-[sub_resource type="BoxMesh" id="BoxMesh_cape"]
-size = Vector3(0.7, 0.9, 0.08)
-
-[sub_resource type="SphereMesh" id="SphereMesh_small"]
-radius = 0.08
-height = 0.16
 
 [node name="Player" type="CharacterBody3D"]
 script = ExtResource("1_controller")
@@ -120,77 +102,6 @@ material_override = SubResource("StandardMaterial3D_tunic")
 mesh = SubResource("CapsuleMesh_leg")
 
 [node name="Accessories" type="Node3D" parent="VisualRoot"]
-
-[node name="glasses" type="Node3D" parent="VisualRoot/Accessories"]
-visible = false
-
-[node name="LeftLens" type="MeshInstance3D" parent="VisualRoot/Accessories/glasses"]
-transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, -0.09, 1.61, -0.225)
-material_override = SubResource("StandardMaterial3D_black")
-mesh = SubResource("BoxMesh_thin")
-
-[node name="RightLens" type="MeshInstance3D" parent="VisualRoot/Accessories/glasses"]
-transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 0.09, 1.61, -0.225)
-material_override = SubResource("StandardMaterial3D_black")
-mesh = SubResource("BoxMesh_thin")
-
-[node name="mask" type="Node3D" parent="VisualRoot/Accessories"]
-visible = false
-
-[node name="MaskBand" type="MeshInstance3D" parent="VisualRoot/Accessories/mask"]
-transform = Transform3D(0.85, 0, 0, 0, 1, 0, 0, 0, 0.65, 0, 1.61, -0.23)
-material_override = SubResource("StandardMaterial3D_black")
-mesh = SubResource("BoxMesh_accessory")
-
-[node name="crown" type="Node3D" parent="VisualRoot/Accessories"]
-visible = false
-
-[node name="CrownBase" type="MeshInstance3D" parent="VisualRoot/Accessories/crown"]
-transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 0, 1.9, 0)
-material_override = SubResource("StandardMaterial3D_gold")
-mesh = SubResource("BoxMesh_accessory")
-
-[node name="CrownTop" type="MeshInstance3D" parent="VisualRoot/Accessories/crown"]
-transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 0, 2.0, 0)
-material_override = SubResource("StandardMaterial3D_gold")
-mesh = SubResource("SphereMesh_small")
-
-[node name="hat" type="Node3D" parent="VisualRoot/Accessories"]
-visible = false
-
-[node name="HatBrim" type="MeshInstance3D" parent="VisualRoot/Accessories/hat"]
-transform = Transform3D(0.95, 0, 0, 0, 0.55, 0, 0, 0, 0.95, 0, 1.83, 0)
-material_override = SubResource("StandardMaterial3D_hat")
-mesh = SubResource("BoxMesh_accessory")
-
-[node name="HatTop" type="MeshInstance3D" parent="VisualRoot/Accessories/hat"]
-transform = Transform3D(0.55, 0, 0, 0, 0.8, 0, 0, 0, 0.55, 0, 1.93, 0)
-material_override = SubResource("StandardMaterial3D_hat")
-mesh = SubResource("BoxMesh_accessory")
-
-[node name="helmet" type="Node3D" parent="VisualRoot/Accessories"]
-visible = false
-
-[node name="HelmetShell" type="MeshInstance3D" parent="VisualRoot/Accessories/helmet"]
-transform = Transform3D(1, 0, 0, 0, 0.42, 0, 0, 0, 1, 0, 1.8, 0)
-material_override = SubResource("StandardMaterial3D_gold")
-mesh = SubResource("SphereMesh_head")
-
-[node name="cape" type="Node3D" parent="VisualRoot/Accessories"]
-visible = false
-
-[node name="CapeBack" type="MeshInstance3D" parent="VisualRoot/Accessories/cape"]
-transform = Transform3D(1, 0, 0, 0, 1, -0.18, 0, 0.18, 1, 0, 0.95, 0.24)
-material_override = SubResource("StandardMaterial3D_black")
-mesh = SubResource("BoxMesh_cape")
-
-[node name="dress" type="Node3D" parent="VisualRoot/Accessories"]
-visible = false
-
-[node name="DressSkirt" type="MeshInstance3D" parent="VisualRoot/Accessories/dress"]
-transform = Transform3D(1.15, 0, 0, 0, 0.8, 0, 0, 0, 1.15, 0, 0.58, 0)
-material_override = SubResource("StandardMaterial3D_gold")
-mesh = SubResource("CapsuleMesh_body")
 
 [node name="belt" type="Node3D" parent="VisualRoot/Accessories"]
 visible = false

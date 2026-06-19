@@ -38,20 +38,20 @@ theme_override_constants/separation = 18
 [node name="TitleLabel" type="Label" parent="Content"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 38
-text = "Escolha seu construtor"
+text = "Escolha seu pequeno construtor"
 horizontal_alignment = 1
 
 [node name="HintLabel" type="Label" parent="Content"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 17
-text = "Selecione um personagem para começar a aventura"
+text = "Você poderá trocar o personagem em versões futuras"
 horizontal_alignment = 1
 
 [node name="CharacterGrid" type="GridContainer" parent="Content"]
 unique_name_in_owner = true
 layout_mode = 2
-columns = 3
-theme_override_constants/h_separation = 14
+columns = 2
+theme_override_constants/h_separation = 22
 theme_override_constants/v_separation = 14
 
 [node name="BackButton" type="Button" parent="Content"]
