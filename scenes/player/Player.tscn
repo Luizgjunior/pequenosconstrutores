@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3]
+[gd_scene load_steps=18 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/PlayerController.gd" id="1_controller"]
 
@@ -42,8 +42,31 @@ height = 0.82
 albedo_color = Color(0.03, 0.03, 0.035, 1)
 roughness = 0.8
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_suit_red"]
+albedo_color = Color(0.58, 0.06, 0.08, 1)
+roughness = 0.62
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_suit_blue"]
+albedo_color = Color(0.03, 0.13, 0.28, 1)
+roughness = 0.68
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_suit_leather"]
+albedo_color = Color(0.32, 0.18, 0.08, 1)
+roughness = 0.86
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_suit_dark"]
+albedo_color = Color(0.02, 0.025, 0.035, 1)
+roughness = 0.7
+
 [sub_resource type="BoxMesh" id="BoxMesh_accessory"]
 size = Vector3(0.5, 0.08, 0.24)
+
+[sub_resource type="BoxMesh" id="BoxMesh_suit_panel"]
+size = Vector3(0.44, 0.12, 0.08)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_slim_detail"]
+radius = 0.055
+height = 0.34
 
 [node name="Player" type="CharacterBody3D"]
 script = ExtResource("1_controller")
@@ -55,7 +78,7 @@ shape = SubResource("CapsuleShape3D_player_collision")
 [node name="VisualRoot" type="Node3D" parent="."]
 
 [node name="Body" type="MeshInstance3D" parent="VisualRoot"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.92, 0)
+transform = Transform3D(0.88, 0, 0, 0, 1.06, 0, 0, 0, 0.88, 0, 0.92, 0)
 material_override = SubResource("StandardMaterial3D_tunic")
 mesh = SubResource("CapsuleMesh_body")
 
@@ -110,6 +133,39 @@ visible = false
 transform = Transform3D(1.35, 0, 0, 0, 0.5, 0, 0, 0, 1.1, 0, 0.95, -0.01)
 material_override = SubResource("StandardMaterial3D_black")
 mesh = SubResource("BoxMesh_accessory")
+
+[node name="adventure_suit" type="Node3D" parent="VisualRoot/Accessories"]
+visible = false
+
+[node name="ChestPanel" type="MeshInstance3D" parent="VisualRoot/Accessories/adventure_suit"]
+transform = Transform3D(1.05, 0, 0, 0, 1.8, 0, 0, 0, 0.5, 0, 1.15, -0.31)
+material_override = SubResource("StandardMaterial3D_suit_red")
+mesh = SubResource("BoxMesh_suit_panel")
+
+[node name="WaistBelt" type="MeshInstance3D" parent="VisualRoot/Accessories/adventure_suit"]
+transform = Transform3D(1.5, 0, 0, 0, 0.55, 0, 0, 0, 1.1, 0, 0.82, -0.02)
+material_override = SubResource("StandardMaterial3D_suit_leather")
+mesh = SubResource("BoxMesh_accessory")
+
+[node name="LeftGlove" type="MeshInstance3D" parent="VisualRoot/Accessories/adventure_suit"]
+transform = Transform3D(0.8, 0, 0, 0, 0.75, 0, 0, 0, 0.8, -0.61, 0.75, 0)
+material_override = SubResource("StandardMaterial3D_suit_red")
+mesh = SubResource("CapsuleMesh_slim_detail")
+
+[node name="RightGlove" type="MeshInstance3D" parent="VisualRoot/Accessories/adventure_suit"]
+transform = Transform3D(0.8, 0, 0, 0, 0.75, 0, 0, 0, 0.8, 0.61, 0.75, 0)
+material_override = SubResource("StandardMaterial3D_suit_red")
+mesh = SubResource("CapsuleMesh_slim_detail")
+
+[node name="LeftBoot" type="MeshInstance3D" parent="VisualRoot/Accessories/adventure_suit"]
+transform = Transform3D(0.95, 0, 0, 0, 0.9, 0, 0, 0, 0.95, -0.16, 0.1, 0)
+material_override = SubResource("StandardMaterial3D_suit_red")
+mesh = SubResource("CapsuleMesh_slim_detail")
+
+[node name="RightBoot" type="MeshInstance3D" parent="VisualRoot/Accessories/adventure_suit"]
+transform = Transform3D(0.95, 0, 0, 0, 0.9, 0, 0, 0, 0.95, 0.16, 0.1, 0)
+material_override = SubResource("StandardMaterial3D_suit_red")
+mesh = SubResource("CapsuleMesh_slim_detail")
 
 [node name="CameraPivot" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)

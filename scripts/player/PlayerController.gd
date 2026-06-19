@@ -240,27 +240,31 @@ func _apply_selected_character() -> void:
 
 	var style := _get_character_style(selected_id)
 	_apply_material(body_mesh, style.body)
-	_apply_material(left_leg_mesh, style.body)
-	_apply_material(right_leg_mesh, style.body)
 	_apply_material(head_mesh, style.skin)
-	_apply_material(left_arm_mesh, style.skin)
-	_apply_material(right_arm_mesh, style.skin)
 	_apply_material(hair_mesh, style.hair)
+	_apply_material(left_arm_mesh, style.arm)
+	_apply_material(right_arm_mesh, style.arm)
+	_apply_material(left_leg_mesh, style.leg)
+	_apply_material(right_leg_mesh, style.leg)
 	_set_accessories(style.accessories)
 
 
 func _get_character_style(character_id: String) -> Dictionary:
 	var styles := {
-		"boy_builder": {
-			"body": Color(0.23, 0.39, 0.50, 1),
-			"skin": Color(0.78, 0.58, 0.42, 1),
-			"hair": Color(0.22, 0.13, 0.07, 1),
-			"accessories": ["belt"]
+	"boy_builder": {
+			"body": Color(0.58, 0.06, 0.08, 1),
+			"skin": Color(0.58, 0.06, 0.08, 1),
+			"hair": Color(0.03, 0.13, 0.28, 1),
+			"arm": Color(0.03, 0.13, 0.28, 1),
+			"leg": Color(0.03, 0.13, 0.28, 1),
+			"accessories": ["belt", "adventure_suit"]
 		},
 		"girl_builder": {
 			"body": Color(0.30, 0.46, 0.56, 1),
 			"skin": Color(0.80, 0.60, 0.44, 1),
 			"hair": Color(0.24, 0.14, 0.08, 1),
+			"arm": Color(0.80, 0.60, 0.44, 1),
+			"leg": Color(0.30, 0.46, 0.56, 1),
 			"accessories": ["belt"]
 		}
 	}
