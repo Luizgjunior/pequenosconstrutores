@@ -34,20 +34,59 @@ vertical_alignment = 1
 [node name="Panel" type="PanelContainer" parent="HudLayer"]
 offset_left = 16.0
 offset_top = 16.0
-offset_right = 430.0
-offset_bottom = 116.0
+offset_right = 520.0
+offset_bottom = 188.0
 
 [node name="VBox" type="VBoxContainer" parent="HudLayer/Panel"]
 layout_mode = 2
+theme_override_constants/separation = 6
 
 [node name="SelectedBlockLabel" type="Label" parent="HudLayer/Panel/VBox"]
 layout_mode = 2
 text = "Bloco: Madeira"
 
+[node name="BlockBar" type="HBoxContainer" parent="HudLayer/Panel/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="WoodSlot" type="Label" parent="HudLayer/Panel/VBox/BlockBar"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.45, 1)
+text = "[1] Madeira"
+
+[node name="StoneSlot" type="Label" parent="HudLayer/Panel/VBox/BlockBar"]
+layout_mode = 2
+text = "[2] Pedra"
+
+[node name="SandSlot" type="Label" parent="HudLayer/Panel/VBox/BlockBar"]
+layout_mode = 2
+text = "[3] Areia"
+
 [node name="ModeLabel" type="Label" parent="HudLayer/Panel/VBox"]
 layout_mode = 2
 text = "Modo: Construcao"
 
-[node name="MissionLabel" type="Label" parent="HudLayer/Panel/VBox"]
+[node name="TutorialLabel" type="Label" parent="HudLayer/Panel/VBox"]
 layout_mode = 2
-text = "Missao: coloque 0/6 blocos de madeira na area central"
+text = "Tutorial: coloque 0/6 blocos de madeira na area central"
+
+[node name="ArkMissionLabel" type="Label" parent="HudLayer/Panel/VBox"]
+visible = false
+layout_mode = 2
+text = "Arca de Noe: construa a base 0/12 com madeira"
+
+[node name="Buttons" type="HBoxContainer" parent="HudLayer/Panel/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="SaveButton" type="Button" parent="HudLayer/Panel/VBox/Buttons"]
+layout_mode = 2
+text = "Salvar"
+
+[node name="ClearButton" type="Button" parent="HudLayer/Panel/VBox/Buttons"]
+layout_mode = 2
+text = "Limpar"
+
+[node name="MenuButton" type="Button" parent="HudLayer/Panel/VBox/Buttons"]
+layout_mode = 2
+text = "Menu"

@@ -10,12 +10,22 @@ const AIM_MARGIN := 18.0
 const SAVE_PATH := "user://placed_blocks.json"
 const MISSION_WOOD_TARGET := 6
 const MISSION_AREA_LIMIT := 6.0
+const ARK_BASE_TARGET := 12
+const ARK_BASE_LIMIT_X := 4.0
+const ARK_BASE_LIMIT_Z := 1.5
 
 @onready var placed_blocks_root: Node3D = $PlacedBlocks
 @onready var crosshair: Control = get_node_or_null("../AimLayer/Crosshair") as Control
 @onready var selected_block_label: Label = get_node_or_null("../HudLayer/Panel/VBox/SelectedBlockLabel") as Label
 @onready var mode_label: Label = get_node_or_null("../HudLayer/Panel/VBox/ModeLabel") as Label
-@onready var mission_label: Label = get_node_or_null("../HudLayer/Panel/VBox/MissionLabel") as Label
+@onready var tutorial_label: Label = get_node_or_null("../HudLayer/Panel/VBox/TutorialLabel") as Label
+@onready var ark_mission_label: Label = get_node_or_null("../HudLayer/Panel/VBox/ArkMissionLabel") as Label
+@onready var wood_slot_label: Label = get_node_or_null("../HudLayer/Panel/VBox/BlockBar/WoodSlot") as Label
+@onready var stone_slot_label: Label = get_node_or_null("../HudLayer/Panel/VBox/BlockBar/StoneSlot") as Label
+@onready var sand_slot_label: Label = get_node_or_null("../HudLayer/Panel/VBox/BlockBar/SandSlot") as Label
+@onready var save_button: Button = get_node_or_null("../HudLayer/Panel/VBox/Buttons/SaveButton") as Button
+@onready var clear_button: Button = get_node_or_null("../HudLayer/Panel/VBox/Buttons/ClearButton") as Button
+@onready var menu_button: Button = get_node_or_null("../HudLayer/Panel/VBox/Buttons/MenuButton") as Button
 
 var block_mesh := BoxMesh.new()
 var block_shape := BoxShape3D.new()
@@ -30,6 +40,7 @@ var aim_screen_position := Vector2.ZERO
 var selected_block_type := "wood"
 var build_mode_enabled := true
 var tutorial_completed := false
+var ark_mission_completed := false
 var block_materials := {}
 
 
@@ -45,6 +56,7 @@ func _ready() -> void:
 	block_shape.size = Vector3.ONE * BLOCK_SIZE
 	_setup_block_materials()
 	_setup_preview()
+	_setup_buttons()
 	_update_crosshair_position()
 	_load_blocks()
 	_update_hud()
@@ -99,6 +111,35 @@ func remove_block_from_camera() -> void:
 		await get_tree().process_frame
 		_save_blocks()
 		_update_hud()
+
+
+func _setup_buttons() -> void:
+	if save_button != null:
+		save_button.pressed.connect(_on_save_pressed)
+	if clear_button != null:
+		clear_button.pressed.connect(_on_clear_pressed)
+	if menu_button != null:
+		menu_button.pressed.connect(_on_menu_pressed)
+
+
+func _on_save_pressed() -> void:
+	_save_blocks()
+	print("Construcao salva.")
+
+
+func _on_clear_pressed() -> void:
+	_clear_blocks()
+	await get_tree().process_frame
+	tutorial_completed = false
+	ark_mission_completed = false
+	_save_blocks()
+	_update_hud()
+
+
+func _on_menu_pressed() -> void:
+	_save_blocks()
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	get_tree().change_scene_to_file("res://scenes/Main.tscn")
 
 
 func _handle_key_input(event: InputEventKey) -> void:
@@ -167,6 +208,11 @@ func _create_block(block_position: Vector3, block_type: String) -> StaticBody3D:
 
 	placed_blocks_root.add_child(block)
 	return block
+
+
+func _clear_blocks() -> void:
+	for block in placed_blocks_root.get_children():
+		block.queue_free()
 
 
 func _setup_preview() -> void:
@@ -259,16 +305,41 @@ func _update_hud() -> void:
 		selected_block_label.text = "Bloco: %s  (1 Madeira, 2 Pedra, 3 Areia)" % _get_block_display_name(selected_block_type)
 	if mode_label != null:
 		mode_label.text = "Modo: %s  (Tab alterna)" % ("Construcao" if build_mode_enabled else "Camera")
-	if mission_label != null:
-		var wood_count := _count_mission_wood_blocks()
-		if wood_count >= MISSION_WOOD_TARGET:
+	if tutorial_label != null:
+		var tutorial_wood_count := _count_tutorial_wood_blocks()
+		if tutorial_wood_count >= MISSION_WOOD_TARGET:
 			tutorial_completed = true
 
-		mission_label.visible = not tutorial_completed
+		tutorial_label.visible = not tutorial_completed
 		if not tutorial_completed:
-			mission_label.text = "Missao: coloque %d/%d blocos de madeira na area central" % [wood_count, MISSION_WOOD_TARGET]
+			tutorial_label.text = "Tutorial: coloque %d/%d blocos de madeira na area central" % [tutorial_wood_count, MISSION_WOOD_TARGET]
 		else:
-			mission_label.text = ""
+			tutorial_label.text = ""
+	if ark_mission_label != null:
+		var ark_wood_count := _count_ark_base_wood_blocks()
+		if ark_wood_count >= ARK_BASE_TARGET:
+			ark_mission_completed = true
+
+		ark_mission_label.visible = tutorial_completed
+		if ark_mission_completed:
+			ark_mission_label.text = "Arca de Noe: base iniciada! Excelente construtor."
+		else:
+			ark_mission_label.text = "Arca de Noe: construa a base %d/%d com madeira" % [ark_wood_count, ARK_BASE_TARGET]
+	_update_block_bar()
+
+
+func _update_block_bar() -> void:
+	_set_slot_style(wood_slot_label, "wood")
+	_set_slot_style(stone_slot_label, "stone")
+	_set_slot_style(sand_slot_label, "sand")
+
+
+func _set_slot_style(label: Label, block_type: String) -> void:
+	if label == null:
+		return
+
+	var selected := block_type == selected_block_type
+	label.add_theme_color_override("font_color", Color(1.0, 0.9, 0.45, 1) if selected else Color(0.88, 0.84, 0.76, 1))
 
 
 func _get_block_display_name(block_type: String) -> String:
@@ -283,7 +354,7 @@ func _get_block_display_name(block_type: String) -> String:
 			return block_type
 
 
-func _count_mission_wood_blocks() -> int:
+func _count_tutorial_wood_blocks() -> int:
 	var total := 0
 	for block in placed_blocks_root.get_children():
 		if not block is Node3D:
@@ -291,6 +362,18 @@ func _count_mission_wood_blocks() -> int:
 		if block.get_meta("block_type", "") != "wood":
 			continue
 		if abs(block.position.x) <= MISSION_AREA_LIMIT and abs(block.position.z) <= MISSION_AREA_LIMIT:
+			total += 1
+	return total
+
+
+func _count_ark_base_wood_blocks() -> int:
+	var total := 0
+	for block in placed_blocks_root.get_children():
+		if not block is Node3D:
+			continue
+		if block.get_meta("block_type", "") != "wood":
+			continue
+		if abs(block.position.x) <= ARK_BASE_LIMIT_X and abs(block.position.z) <= ARK_BASE_LIMIT_Z:
 			total += 1
 	return total
 

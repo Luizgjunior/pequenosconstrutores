@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/PlayerController.gd" id="1_controller"]
 
@@ -17,6 +17,12 @@ size = Vector3(0.24, 0.9, 0.28)
 
 [sub_resource type="BoxMesh" id="BoxMesh_leg"]
 size = Vector3(0.28, 0.85, 0.32)
+
+[sub_resource type="BoxMesh" id="BoxMesh_detail"]
+size = Vector3(1, 1, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_sandal"]
+size = Vector3(0.34, 0.12, 0.44)
 
 [sub_resource type="StandardMaterial3D" id="Material_tunic"]
 albedo_color = Color(0.27, 0.42, 0.48, 1)
@@ -48,6 +54,16 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.95, 0)
 material_override = SubResource("Material_tunic")
 mesh = SubResource("BoxMesh_body")
 
+[node name="ChestTrim" type="MeshInstance3D" parent="VisualRoot"]
+transform = Transform3D(0.7, 0, 0, 0, 0.08, 0, 0, 0, 0.52, 0, 1.28, -0.24)
+material_override = SubResource("Material_leather")
+mesh = SubResource("BoxMesh_detail")
+
+[node name="Belt" type="MeshInstance3D" parent="VisualRoot"]
+transform = Transform3D(0.9, 0, 0, 0, 0.1, 0, 0, 0, 0.52, 0, 0.72, -0.01)
+material_override = SubResource("Material_leather")
+mesh = SubResource("BoxMesh_detail")
+
 [node name="Head" type="MeshInstance3D" parent="VisualRoot"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.72, 0)
 material_override = SubResource("Material_skin")
@@ -57,6 +73,11 @@ mesh = SubResource("BoxMesh_head")
 transform = Transform3D(1, 0, 0, 0, 0.32, 0, 0, 0, 1, 0, 1.94, -0.02)
 material_override = SubResource("Material_hair")
 mesh = SubResource("BoxMesh_head")
+
+[node name="HairFront" type="MeshInstance3D" parent="VisualRoot"]
+transform = Transform3D(0.84, 0, 0, 0, 0.16, 0, 0, 0, 0.16, 0, 1.84, -0.31)
+material_override = SubResource("Material_hair")
+mesh = SubResource("BoxMesh_detail")
 
 [node name="LeftArmPivot" type="Node3D" parent="VisualRoot"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.54, 1.08, 0)
@@ -82,6 +103,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.32, 0)
 material_override = SubResource("Material_leather")
 mesh = SubResource("BoxMesh_leg")
 
+[node name="LeftSandal" type="MeshInstance3D" parent="VisualRoot/LeftLegPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.78, -0.03)
+material_override = SubResource("Material_leather")
+mesh = SubResource("BoxMesh_sandal")
+
 [node name="RightLegPivot" type="Node3D" parent="VisualRoot"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.2, 0.44, 0)
 
@@ -89,6 +115,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.2, 0.44, 0)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.32, 0)
 material_override = SubResource("Material_leather")
 mesh = SubResource("BoxMesh_leg")
+
+[node name="RightSandal" type="MeshInstance3D" parent="VisualRoot/RightLegPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.78, -0.03)
+material_override = SubResource("Material_leather")
+mesh = SubResource("BoxMesh_sandal")
 
 [node name="CameraPivot" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
