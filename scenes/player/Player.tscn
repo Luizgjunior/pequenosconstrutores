@@ -1,0 +1,209 @@
+[gd_scene load_steps=18 format=3]
+
+[ext_resource type="Script" path="res://scripts/player/PlayerController.gd" id="1_controller"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_player_collision"]
+radius = 0.35
+height = 1.8
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tunic"]
+albedo_color = Color(0.48, 0.35, 0.22, 1)
+roughness = 0.8
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_skin"]
+albedo_color = Color(0.78, 0.58, 0.42, 1)
+roughness = 0.72
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hair"]
+albedo_color = Color(0.16, 0.1, 0.06, 1)
+roughness = 0.85
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_body"]
+radius = 0.32
+height = 1.05
+
+[sub_resource type="SphereMesh" id="SphereMesh_head"]
+radius = 0.24
+height = 0.48
+
+[sub_resource type="SphereMesh" id="SphereMesh_hair"]
+radius = 0.245
+height = 0.18
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_limb"]
+radius = 0.08
+height = 0.72
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_leg"]
+radius = 0.1
+height = 0.82
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_black"]
+albedo_color = Color(0.03, 0.03, 0.035, 1)
+roughness = 0.8
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gold"]
+albedo_color = Color(0.95, 0.72, 0.22, 1)
+roughness = 0.65
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hat"]
+albedo_color = Color(0.18, 0.11, 0.07, 1)
+roughness = 0.85
+
+[sub_resource type="BoxMesh" id="BoxMesh_thin"]
+size = Vector3(0.36, 0.08, 0.08)
+
+[sub_resource type="BoxMesh" id="BoxMesh_accessory"]
+size = Vector3(0.5, 0.08, 0.24)
+
+[sub_resource type="BoxMesh" id="BoxMesh_cape"]
+size = Vector3(0.7, 0.9, 0.08)
+
+[sub_resource type="SphereMesh" id="SphereMesh_small"]
+radius = 0.08
+height = 0.16
+
+[node name="Player" type="CharacterBody3D"]
+script = ExtResource("1_controller")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+shape = SubResource("CapsuleShape3D_player_collision")
+
+[node name="VisualRoot" type="Node3D" parent="."]
+
+[node name="Body" type="MeshInstance3D" parent="VisualRoot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.92, 0)
+material_override = SubResource("StandardMaterial3D_tunic")
+mesh = SubResource("CapsuleMesh_body")
+
+[node name="Head" type="MeshInstance3D" parent="VisualRoot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+material_override = SubResource("StandardMaterial3D_skin")
+mesh = SubResource("SphereMesh_head")
+
+[node name="Hair" type="MeshInstance3D" parent="VisualRoot"]
+transform = Transform3D(1, 0, 0, 0, 0.45, 0, 0, 0, 1, 0, 1.78, -0.02)
+material_override = SubResource("StandardMaterial3D_hair")
+mesh = SubResource("SphereMesh_hair")
+
+[node name="LeftArmPivot" type="Node3D" parent="VisualRoot"]
+transform = Transform3D(0.94693, 0.321439, 0, -0.321439, 0.94693, 0, 0, 0, 1, -0.43, 1.3, 0)
+
+[node name="LeftArm" type="MeshInstance3D" parent="VisualRoot/LeftArmPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.28, 0)
+material_override = SubResource("StandardMaterial3D_skin")
+mesh = SubResource("CapsuleMesh_limb")
+
+[node name="RightArmPivot" type="Node3D" parent="VisualRoot"]
+transform = Transform3D(0.94693, -0.321439, 0, 0.321439, 0.94693, 0, 0, 0, 1, 0.43, 1.3, 0)
+
+[node name="RightArm" type="MeshInstance3D" parent="VisualRoot/RightArmPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.28, 0)
+material_override = SubResource("StandardMaterial3D_skin")
+mesh = SubResource("CapsuleMesh_limb")
+
+[node name="LeftLegPivot" type="Node3D" parent="VisualRoot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.16, 0.68, 0)
+
+[node name="LeftLeg" type="MeshInstance3D" parent="VisualRoot/LeftLegPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.34, 0)
+material_override = SubResource("StandardMaterial3D_tunic")
+mesh = SubResource("CapsuleMesh_leg")
+
+[node name="RightLegPivot" type="Node3D" parent="VisualRoot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.16, 0.68, 0)
+
+[node name="RightLeg" type="MeshInstance3D" parent="VisualRoot/RightLegPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.34, 0)
+material_override = SubResource("StandardMaterial3D_tunic")
+mesh = SubResource("CapsuleMesh_leg")
+
+[node name="Accessories" type="Node3D" parent="VisualRoot"]
+
+[node name="glasses" type="Node3D" parent="VisualRoot/Accessories"]
+visible = false
+
+[node name="LeftLens" type="MeshInstance3D" parent="VisualRoot/Accessories/glasses"]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, -0.09, 1.61, -0.225)
+material_override = SubResource("StandardMaterial3D_black")
+mesh = SubResource("BoxMesh_thin")
+
+[node name="RightLens" type="MeshInstance3D" parent="VisualRoot/Accessories/glasses"]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 0.09, 1.61, -0.225)
+material_override = SubResource("StandardMaterial3D_black")
+mesh = SubResource("BoxMesh_thin")
+
+[node name="mask" type="Node3D" parent="VisualRoot/Accessories"]
+visible = false
+
+[node name="MaskBand" type="MeshInstance3D" parent="VisualRoot/Accessories/mask"]
+transform = Transform3D(0.85, 0, 0, 0, 1, 0, 0, 0, 0.65, 0, 1.61, -0.23)
+material_override = SubResource("StandardMaterial3D_black")
+mesh = SubResource("BoxMesh_accessory")
+
+[node name="crown" type="Node3D" parent="VisualRoot/Accessories"]
+visible = false
+
+[node name="CrownBase" type="MeshInstance3D" parent="VisualRoot/Accessories/crown"]
+transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 0, 1.9, 0)
+material_override = SubResource("StandardMaterial3D_gold")
+mesh = SubResource("BoxMesh_accessory")
+
+[node name="CrownTop" type="MeshInstance3D" parent="VisualRoot/Accessories/crown"]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 0, 2.0, 0)
+material_override = SubResource("StandardMaterial3D_gold")
+mesh = SubResource("SphereMesh_small")
+
+[node name="hat" type="Node3D" parent="VisualRoot/Accessories"]
+visible = false
+
+[node name="HatBrim" type="MeshInstance3D" parent="VisualRoot/Accessories/hat"]
+transform = Transform3D(0.95, 0, 0, 0, 0.55, 0, 0, 0, 0.95, 0, 1.83, 0)
+material_override = SubResource("StandardMaterial3D_hat")
+mesh = SubResource("BoxMesh_accessory")
+
+[node name="HatTop" type="MeshInstance3D" parent="VisualRoot/Accessories/hat"]
+transform = Transform3D(0.55, 0, 0, 0, 0.8, 0, 0, 0, 0.55, 0, 1.93, 0)
+material_override = SubResource("StandardMaterial3D_hat")
+mesh = SubResource("BoxMesh_accessory")
+
+[node name="helmet" type="Node3D" parent="VisualRoot/Accessories"]
+visible = false
+
+[node name="HelmetShell" type="MeshInstance3D" parent="VisualRoot/Accessories/helmet"]
+transform = Transform3D(1, 0, 0, 0, 0.42, 0, 0, 0, 1, 0, 1.8, 0)
+material_override = SubResource("StandardMaterial3D_gold")
+mesh = SubResource("SphereMesh_head")
+
+[node name="cape" type="Node3D" parent="VisualRoot/Accessories"]
+visible = false
+
+[node name="CapeBack" type="MeshInstance3D" parent="VisualRoot/Accessories/cape"]
+transform = Transform3D(1, 0, 0, 0, 1, -0.18, 0, 0.18, 1, 0, 0.95, 0.24)
+material_override = SubResource("StandardMaterial3D_black")
+mesh = SubResource("BoxMesh_cape")
+
+[node name="dress" type="Node3D" parent="VisualRoot/Accessories"]
+visible = false
+
+[node name="DressSkirt" type="MeshInstance3D" parent="VisualRoot/Accessories/dress"]
+transform = Transform3D(1.15, 0, 0, 0, 0.8, 0, 0, 0, 1.15, 0, 0.58, 0)
+material_override = SubResource("StandardMaterial3D_gold")
+mesh = SubResource("CapsuleMesh_body")
+
+[node name="belt" type="Node3D" parent="VisualRoot/Accessories"]
+visible = false
+
+[node name="BeltBand" type="MeshInstance3D" parent="VisualRoot/Accessories/belt"]
+transform = Transform3D(1.35, 0, 0, 0, 0.5, 0, 0, 0, 1.1, 0, 0.95, -0.01)
+material_override = SubResource("StandardMaterial3D_black")
+mesh = SubResource("BoxMesh_accessory")
+
+[node name="CameraPivot" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.45, 0)
+
+[node name="Camera3D" type="Camera3D" parent="CameraPivot"]
+transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 0, 0.35, 3.4)
+current = true
+fov = 65.0

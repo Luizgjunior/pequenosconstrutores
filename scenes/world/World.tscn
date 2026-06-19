@@ -1,0 +1,211 @@
+[gd_scene load_steps=20 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/WorldManager.gd" id="1_world_manager"]
+[ext_resource type="Material" path="res://assets/materials/sand.tres" id="2_sand"]
+[ext_resource type="Material" path="res://assets/materials/dirt.tres" id="3_dirt"]
+[ext_resource type="Material" path="res://assets/materials/stone.tres" id="4_stone"]
+[ext_resource type="Material" path="res://assets/materials/wood.tres" id="5_wood"]
+[ext_resource type="Material" path="res://assets/materials/dry_grass.tres" id="6_dry_grass"]
+[ext_resource type="Material" path="res://assets/materials/water.tres" id="7_water"]
+
+[sub_resource type="Environment" id="Environment_valley"]
+background_mode = 2
+sky = null
+ambient_light_source = 1
+ambient_light_color = Color(0.78, 0.72, 0.62, 1)
+ambient_light_energy = 0.75
+tonemap_mode = 2
+glow_enabled = false
+
+[sub_resource type="BoxMesh" id="BoxMesh_central_ground"]
+material = ExtResource("2_sand")
+size = Vector3(24, 0.4, 24)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_central_ground"]
+size = Vector3(24, 0.4, 24)
+
+[sub_resource type="BoxMesh" id="BoxMesh_hill"]
+material = ExtResource("3_dirt")
+size = Vector3(10, 2.2, 28)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_hill"]
+size = Vector3(10, 2.2, 28)
+
+[sub_resource type="BoxMesh" id="BoxMesh_dry_grass_patch"]
+material = ExtResource("6_dry_grass")
+size = Vector3(5, 0.08, 4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_stream"]
+material = ExtResource("7_water")
+size = Vector3(3.4, 0.05, 21)
+
+[sub_resource type="SphereMesh" id="SphereMesh_rock"]
+material = ExtResource("4_stone")
+radius = 0.7
+height = 1.0
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_rock"]
+radius = 0.7
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_trunk"]
+material = ExtResource("5_wood")
+top_radius = 0.18
+bottom_radius = 0.26
+height = 1.7
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_trunk"]
+radius = 0.28
+height = 1.7
+
+[sub_resource type="SphereMesh" id="SphereMesh_canopy"]
+material = ExtResource("6_dry_grass")
+radius = 0.9
+height = 1.2
+
+[node name="World" type="Node3D"]
+script = ExtResource("1_world_manager")
+
+[node name="Environment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_valley")
+
+[node name="SunLight" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.819152, -0.40558, 0.40558, 0, 0.707107, 0.707107, -0.573576, -0.579228, 0.579228, 0, 10, 0)
+light_color = Color(1, 0.92, 0.78, 1)
+light_energy = 2.1
+shadow_enabled = true
+directional_shadow_mode = 0
+
+[node name="Terrain" type="Node3D" parent="."]
+
+[node name="CentralBuildArea" type="StaticBody3D" parent="Terrain"]
+
+[node name="Mesh" type="MeshInstance3D" parent="Terrain/CentralBuildArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
+mesh = SubResource("BoxMesh_central_ground")
+
+[node name="Collision" type="CollisionShape3D" parent="Terrain/CentralBuildArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
+shape = SubResource("BoxShape3D_central_ground")
+
+[node name="LeftRidge" type="StaticBody3D" parent="Terrain"]
+transform = Transform3D(0.985, 0, -0.174, 0, 1, 0, 0.174, 0, 0.985, -14, 0.55, 1.5)
+
+[node name="Mesh" type="MeshInstance3D" parent="Terrain/LeftRidge"]
+mesh = SubResource("BoxMesh_hill")
+
+[node name="Collision" type="CollisionShape3D" parent="Terrain/LeftRidge"]
+shape = SubResource("BoxShape3D_hill")
+
+[node name="RightRidge" type="StaticBody3D" parent="Terrain"]
+transform = Transform3D(0.985, 0, 0.174, 0, 1, 0, -0.174, 0, 0.985, 14, 0.55, -1.5)
+
+[node name="Mesh" type="MeshInstance3D" parent="Terrain/RightRidge"]
+mesh = SubResource("BoxMesh_hill")
+
+[node name="Collision" type="CollisionShape3D" parent="Terrain/RightRidge"]
+shape = SubResource("BoxShape3D_hill")
+
+[node name="BackRidge" type="StaticBody3D" parent="Terrain"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, -14)
+
+[node name="Mesh" type="MeshInstance3D" parent="Terrain/BackRidge"]
+transform = Transform3D(2.2, 0, 0, 0, 0.8, 0, 0, 0, 0.45, 0, 0, 0)
+mesh = SubResource("BoxMesh_hill")
+
+[node name="Collision" type="CollisionShape3D" parent="Terrain/BackRidge"]
+transform = Transform3D(2.2, 0, 0, 0, 0.8, 0, 0, 0, 0.45, 0, 0, 0)
+shape = SubResource("BoxShape3D_hill")
+
+[node name="DryGrassPatches" type="Node3D" parent="Terrain"]
+
+[node name="PatchNorthWest" type="MeshInstance3D" parent="Terrain/DryGrassPatches"]
+transform = Transform3D(0.906308, 0, -0.422618, 0, 1, 0, 0.422618, 0, 0.906308, -5.5, 0.035, -5.5)
+mesh = SubResource("BoxMesh_dry_grass_patch")
+
+[node name="PatchSouthEast" type="MeshInstance3D" parent="Terrain/DryGrassPatches"]
+transform = Transform3D(0.819152, 0, 0.573576, 0, 1, 0, -0.573576, 0, 0.819152, 6.0, 0.035, 5.0)
+mesh = SubResource("BoxMesh_dry_grass_patch")
+
+[node name="Stream" type="Node3D" parent="."]
+
+[node name="ShallowWater" type="MeshInstance3D" parent="Stream"]
+transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, -7, 0.035, 1)
+mesh = SubResource("BoxMesh_stream")
+
+[node name="Decorations" type="Node3D" parent="."]
+
+[node name="Rocks" type="Node3D" parent="Decorations"]
+
+[node name="Rock01" type="StaticBody3D" parent="Decorations/Rocks"]
+transform = Transform3D(1.2, 0, 0, 0, 0.55, 0, 0, 0, 0.9, -7.5, 0.45, -4.5)
+
+[node name="Mesh" type="MeshInstance3D" parent="Decorations/Rocks/Rock01"]
+mesh = SubResource("SphereMesh_rock")
+
+[node name="Collision" type="CollisionShape3D" parent="Decorations/Rocks/Rock01"]
+shape = SubResource("SphereShape3D_rock")
+
+[node name="Rock02" type="StaticBody3D" parent="Decorations/Rocks"]
+transform = Transform3D(0.8, 0, 0, 0, 0.45, 0, 0, 0, 0.75, 8, 0.35, -5)
+
+[node name="Mesh" type="MeshInstance3D" parent="Decorations/Rocks/Rock02"]
+mesh = SubResource("SphereMesh_rock")
+
+[node name="Collision" type="CollisionShape3D" parent="Decorations/Rocks/Rock02"]
+shape = SubResource("SphereShape3D_rock")
+
+[node name="Rock03" type="StaticBody3D" parent="Decorations/Rocks"]
+transform = Transform3D(0.65, 0, 0, 0, 0.35, 0, 0, 0, 0.9, 5.5, 0.32, 7.5)
+
+[node name="Mesh" type="MeshInstance3D" parent="Decorations/Rocks/Rock03"]
+mesh = SubResource("SphereMesh_rock")
+
+[node name="Collision" type="CollisionShape3D" parent="Decorations/Rocks/Rock03"]
+shape = SubResource("SphereShape3D_rock")
+
+[node name="Trees" type="Node3D" parent="Decorations"]
+
+[node name="Tree01" type="StaticBody3D" parent="Decorations/Trees"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.5, 0, 6.5)
+
+[node name="Trunk" type="MeshInstance3D" parent="Decorations/Trees/Tree01"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
+mesh = SubResource("CylinderMesh_trunk")
+
+[node name="TrunkCollision" type="CollisionShape3D" parent="Decorations/Trees/Tree01"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
+shape = SubResource("CylinderShape3D_trunk")
+
+[node name="Canopy" type="MeshInstance3D" parent="Decorations/Trees/Tree01"]
+transform = Transform3D(1.2, 0, 0, 0, 0.8, 0, 0, 0, 1.0, 0, 1.85, 0)
+mesh = SubResource("SphereMesh_canopy")
+
+[node name="Tree02" type="StaticBody3D" parent="Decorations/Trees"]
+transform = Transform3D(0.906308, 0, -0.422618, 0, 1, 0, 0.422618, 0, 0.906308, 8.5, 0, 5.5)
+
+[node name="Trunk" type="MeshInstance3D" parent="Decorations/Trees/Tree02"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
+mesh = SubResource("CylinderMesh_trunk")
+
+[node name="TrunkCollision" type="CollisionShape3D" parent="Decorations/Trees/Tree02"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
+shape = SubResource("CylinderShape3D_trunk")
+
+[node name="Canopy" type="MeshInstance3D" parent="Decorations/Trees/Tree02"]
+transform = Transform3D(0.95, 0, 0, 0, 0.75, 0, 0, 0, 1.15, 0, 1.85, 0)
+mesh = SubResource("SphereMesh_canopy")
+
+[node name="Tree03" type="StaticBody3D" parent="Decorations/Trees"]
+transform = Transform3D(0.819152, 0, 0.573576, 0, 1, 0, -0.573576, 0, 0.819152, -4.5, 0, -8)
+
+[node name="Trunk" type="MeshInstance3D" parent="Decorations/Trees/Tree03"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
+mesh = SubResource("CylinderMesh_trunk")
+
+[node name="TrunkCollision" type="CollisionShape3D" parent="Decorations/Trees/Tree03"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
+shape = SubResource("CylinderShape3D_trunk")
+
+[node name="Canopy" type="MeshInstance3D" parent="Decorations/Trees/Tree03"]
+transform = Transform3D(1.05, 0, 0, 0, 0.72, 0, 0, 0, 0.95, 0, 1.85, 0)
+mesh = SubResource("SphereMesh_canopy")
