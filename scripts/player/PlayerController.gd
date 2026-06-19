@@ -6,6 +6,9 @@ extends CharacterBody3D
 @export var mouse_sensitivity := 0.0025
 @export var camera_distance := 7.0
 @export var camera_pitch_degrees := 45.0
+@export var min_camera_pitch_degrees := 18.0
+@export var max_camera_pitch_degrees := 78.0
+@export var camera_pitch_sensitivity := 180.0
 
 @onready var camera_pivot: Node3D = $CameraPivot
 @onready var camera: Camera3D = $CameraPivot/Camera3D
@@ -17,9 +20,11 @@ extends CharacterBody3D
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 var mouse_captured := true
 var walk_time := 0.0
+var current_camera_pitch := 45.0
 
 
 func _ready() -> void:
+	current_camera_pitch = camera_pitch_degrees
 	_update_camera_position()
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
@@ -33,6 +38,12 @@ func _unhandled_input(event: InputEvent) -> void:
 
 	if mouse_captured and event is InputEventMouseMotion:
 		rotate_y(-event.relative.x * mouse_sensitivity)
+		current_camera_pitch = clamp(
+			current_camera_pitch + event.relative.y * mouse_sensitivity * camera_pitch_sensitivity,
+			min_camera_pitch_degrees,
+			max_camera_pitch_degrees
+		)
+		_update_camera_position()
 
 
 func _physics_process(delta: float) -> void:
@@ -59,7 +70,8 @@ func _physics_process(delta: float) -> void:
 
 
 func _update_camera_position() -> void:
-	var pitch := deg_to_rad(camera_pitch_degrees)
+	current_camera_pitch = clamp(current_camera_pitch, min_camera_pitch_degrees, max_camera_pitch_degrees)
+	var pitch := deg_to_rad(current_camera_pitch)
 	camera_pivot.position = Vector3(0, 1.6, 0)
 	camera.position = Vector3(0, sin(pitch) * camera_distance, cos(pitch) * camera_distance)
 	camera.look_at(global_position + Vector3(0, 1.0, 0), Vector3.UP)
