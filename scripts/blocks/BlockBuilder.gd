@@ -5,8 +5,11 @@ const BLOCK_SIZE := 1.0
 const GROUND_TOP_Y := 0.2
 const MAX_BUILD_DISTANCE := 18.0
 const BUILD_LIMIT := 16.0
+const AIM_SPEED := 1.0
+const AIM_MARGIN := 18.0
 
 @onready var placed_blocks_root: Node3D = $PlacedBlocks
+@onready var crosshair: Control = get_node_or_null("../AimLayer/Crosshair") as Control
 
 var block_mesh := BoxMesh.new()
 var block_shape := BoxShape3D.new()
@@ -18,6 +21,7 @@ var preview_block: MeshInstance3D
 var preview_arrow: MeshInstance3D
 var player: CharacterBody3D
 var camera: Camera3D
+var aim_screen_position := Vector2.ZERO
 
 
 func _ready() -> void:
@@ -25,15 +29,23 @@ func _ready() -> void:
 	if player != null:
 		camera = player.get_node_or_null("CameraPivot/Camera3D") as Camera3D
 
+	aim_screen_position = get_viewport().get_visible_rect().size * 0.5
 	block_mesh.size = Vector3.ONE * BLOCK_SIZE
 	block_shape.size = Vector3.ONE * BLOCK_SIZE
 	block_material.albedo_color = Color(0.45, 0.27, 0.12, 1)
 	block_material.roughness = 0.9
 	_setup_preview()
+	_update_crosshair_position()
 
 
 func _process(_delta: float) -> void:
+	_update_crosshair_position()
 	_update_preview()
+
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseMotion:
+		_move_aim(event.relative * AIM_SPEED)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -137,16 +149,28 @@ func _raycast_from_camera() -> Dictionary:
 	if camera == null:
 		return {}
 
-	var viewport_size := get_viewport().get_visible_rect().size
-	var screen_center := viewport_size * 0.5
-	var ray_origin := camera.project_ray_origin(screen_center)
-	var ray_end := ray_origin + camera.project_ray_normal(screen_center) * MAX_BUILD_DISTANCE
+	var ray_origin := camera.project_ray_origin(aim_screen_position)
+	var ray_end := ray_origin + camera.project_ray_normal(aim_screen_position) * MAX_BUILD_DISTANCE
 
 	var query := PhysicsRayQueryParameters3D.create(ray_origin, ray_end)
 	if player != null:
 		query.exclude = [player.get_rid()]
 
 	return get_world_3d().direct_space_state.intersect_ray(query)
+
+
+func _move_aim(delta: Vector2) -> void:
+	var viewport_size := get_viewport().get_visible_rect().size
+	aim_screen_position += delta
+	aim_screen_position.x = clampf(aim_screen_position.x, AIM_MARGIN, viewport_size.x - AIM_MARGIN)
+	aim_screen_position.y = clampf(aim_screen_position.y, AIM_MARGIN, viewport_size.y - AIM_MARGIN)
+
+
+func _update_crosshair_position() -> void:
+	if crosshair == null:
+		return
+
+	crosshair.global_position = aim_screen_position - crosshair.size * 0.5
 
 
 func _get_place_position(hit: Dictionary) -> Vector3:
