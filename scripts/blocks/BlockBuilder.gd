@@ -29,6 +29,7 @@ var camera: Camera3D
 var aim_screen_position := Vector2.ZERO
 var selected_block_type := "wood"
 var build_mode_enabled := true
+var tutorial_completed := false
 var block_materials := {}
 
 
@@ -261,9 +262,13 @@ func _update_hud() -> void:
 	if mission_label != null:
 		var wood_count := _count_mission_wood_blocks()
 		if wood_count >= MISSION_WOOD_TARGET:
-			mission_label.text = "Missao: base da arca iniciada! Muito bem."
-		else:
+			tutorial_completed = true
+
+		mission_label.visible = not tutorial_completed
+		if not tutorial_completed:
 			mission_label.text = "Missao: coloque %d/%d blocos de madeira na area central" % [wood_count, MISSION_WOOD_TARGET]
+		else:
+			mission_label.text = ""
 
 
 func _get_block_display_name(block_type: String) -> String:
